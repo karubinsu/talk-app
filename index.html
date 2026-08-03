@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Talk — Casual Live Translator</title>
+<style>
+  :root{
+    --bg:#14141f; --bg-soft:#1c1c2c; --card:#232338; --card-hi:#2b2b44;
+    --accent:#ff8b5e; --accent-2:#f2c14e; --text:#f5f1ea; --text-muted:#a8a4b8;
+    --border: rgba(245,241,234,0.08);
+    --serif: 'Iowan Old Style','Palatino Linotype','Book Antiqua', Georgia, serif;
+    --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;height:100%;}
+  body{
+    background:
+      radial-gradient(circle at 20% 0%, rgba(255,139,94,0.14), transparent 55%),
+      radial-gradient(circle at 90% 100%, rgba(242,193,78,0.10), transparent 50%),
+      var(--bg);
+    color:var(--text); font-family:var(--sans); min-height:100vh;
+    display:flex; align-items:center; justify-content:center; padding:20px;
+  }
+  .app{
+    width:100%; max-width:440px; min-height:640px; background:var(--bg-soft);
+    border:1px solid var(--border); border-radius:28px; padding:28px 22px 22px;
+    position:relative; display:flex; flex-direction:column;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.45);
+  }
+  .mark{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:18px;}
+  .mark-left{display:flex;align-items:center;gap:8px;}
+  .mark svg{width:26px;height:26px;flex-shrink:0;}
+  .mark span.label{font-family:var(--serif);font-size:15px;letter-spacing:0.02em;color:var(--text-muted);}
+  .start-over{font-size:11px;color:var(--text-muted);cursor:pointer;text-decoration:underline;white-space:nowrap;}
+  h1{font-family:var(--serif);font-weight:500;font-size:28px;line-height:1.25;margin:0 0 8px;}
+  .sub{color:var(--text-muted);font-size:14.5px;line-height:1.5;margin:0 0 16px;}
+  .screen{flex:1;display:flex;flex-direction:column;}
+  .grow{flex:1;}
+  .lang-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:6px;}
+  .lang-btn{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:14px 12px;text-align:left;cursor:pointer;color:var(--text);transition:border-color .15s, background .15s;}
+  .lang-btn:hover{border-color:rgba(255,139,94,0.4);}
+  .lang-btn.selected{background:linear-gradient(135deg, rgba(255,139,94,0.18), rgba(242,193,78,0.10));border-color:var(--accent);}
+  .lang-native{font-family:var(--serif);font-size:19px;display:block;}
+  .lang-eng{font-size:12px;color:var(--text-muted);display:block;margin-top:2px;}
+  .lang-btn.other .lang-native{font-family:var(--sans);font-size:16px;}
+  label.field-label{font-size:13px;color:var(--text-muted);display:block;margin:18px 0 8px;}
+  select, input[type=text], textarea{width:100%;background:var(--card);border:1px solid var(--border);border-radius:14px;color:var(--text);font-family:var(--sans);font-size:15.5px;padding:14px;outline:none;}
+  select:focus, input:focus, textarea:focus{border-color:var(--accent);}
+  textarea{resize:vertical;min-height:90px;}
+  .hint{font-size:12px;color:var(--text-muted);margin:7px 2px 0;line-height:1.4;}
+  .btn{display:block;width:100%;text-align:center;border:none;border-radius:16px;padding:15px;font-size:15.5px;font-weight:600;cursor:pointer;font-family:var(--sans);}
+  .btn-primary{background:linear-gradient(135deg, var(--accent), var(--accent-2));color:#1a1410;margin-top:20px;}
+  .btn-primary:disabled{opacity:0.5;cursor:not-allowed;}
+  .btn-ghost{background:transparent;border:1px solid var(--border);color:var(--text-muted);margin-top:10px;}
+  .loading{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;gap:14px;color:var(--text-muted);font-size:14px;}
+  .pulse{width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg, var(--accent), var(--accent-2));animation:pulse 1.3s ease-in-out infinite;}
+  @keyframes pulse{0%,100%{transform:scale(0.85);opacity:0.7;}50%{transform:scale(1);opacity:1;}}
+  .turn-toggle{display:flex;background:var(--card);border-radius:14px;padding:4px;margin-bottom:14px;border:1px solid var(--border);}
+  .turn-btn{flex:1;text-align:center;padding:10px 6px;border-radius:11px;cursor:pointer;font-size:13.5px;color:var(--text-muted);}
+  .turn-btn.active{background:var(--card-hi);color:var(--text);font-weight:600;}
+  .messages{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:12px;padding:4px 2px 14px;min-height:180px;max-height:340px;}
+  .msg{max-width:86%;padding:11px 14px;border-radius:16px;font-size:14.5px;line-height:1.45;}
+  .msg.host{align-self:flex-end;background:linear-gradient(135deg, rgba(255,139,94,0.22), rgba(242,193,78,0.14));border-bottom-right-radius:4px;}
+  .msg.guest{align-self:flex-start;background:var(--card);border-bottom-left-radius:4px;}
+  .msg .orig{font-size:12px;color:var(--text-muted);margin-top:5px;}
+  .msg.error{border:1px solid rgba(255,120,120,0.45);cursor:pointer;}
+  .error-text{font-size:13px;color:#ff9a9a;display:flex;align-items:center;gap:6px;}
+  .translating{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-muted);}
+  .dot{width:5px;height:5px;border-radius:50%;background:var(--text-muted);animation:blink 1.2s infinite;}
+  .dot:nth-child(2){animation-delay:.2s;} .dot:nth-child(3){animation-delay:.4s;}
+  @keyframes blink{0%,80%,100%{opacity:.2;}40%{opacity:1;}}
+  .chat-input-row{display:flex;gap:8px;margin-top:auto;}
+  .chat-input-row textarea{min-height:46px;max-height:100px;}
+  .send-btn{background:linear-gradient(135deg, var(--accent), var(--accent-2));border:none;border-radius:14px;width:52px;flex-shrink:0;cursor:pointer;}
+  .end-link{text-align:center;font-size:13px;color:var(--text-muted);margin-top:14px;cursor:pointer;text-decoration:underline;}
+  .thanks-icon{font-size:38px;margin-bottom:6px;}
+  .feature-list{margin:4px 0 14px;padding-left:20px;}
+  .feature-list li{margin-bottom:6px;font-size:14px;color:var(--text-muted);line-height:1.4;}
+  .banner{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--text-muted);background:var(--card);border:1px solid var(--border);border-radius:12px;padding:9px 12px;margin-bottom:14px;}
+  .hidden{display:none !important;}
+</style>
+</head>
+<body>
+<div class="app" id="app"></div>
+
+<script>
+/* ============ CONFIG ============ */
+const CLAUDE_MODEL = "claude-sonnet-4-6";
+const HOST_EMAIL = "karlvincev.kvv@gmail.com";
+const STORAGE_KEY = "talk_app_state_v3";
+const UI_CACHE_PREFIX = "talk_ui_cache_v3_";
+
+const LANGUAGES = [
+  { code:'zh', label:'Chinese (Mandarin)', native:'中文', dialects:[
+      {en:'Standard / Mainland', native:'普通话（标准/大陆）'},
+      {en:'Taiwanese Mandarin', native:'台湾国语'},
+      {en:'Singaporean Mandarin', native:'新加坡华语'},
+      {en:'Cantonese', native:'广东话 / 粤语'},
+  ]},
+  { code:'ja', label:'Japanese', native:'日本語', dialects:[
+      {en:'Standard (Tokyo)', native:'標準語（東京弁）'},
+      {en:'Kansai', native:'関西弁'},
+      {en:'Other regional', native:'その他の方言'},
+  ]},
+  { code:'ko', label:'Korean', native:'한국어', dialects:[
+      {en:'Standard (Seoul)', native:'표준어 (서울말)'},
+      {en:'Regional (Satoori)', native:'사투리'},
+  ]},
+  { code:'vi', label:'Vietnamese', native:'Tiếng Việt', dialects:[
+      {en:'Northern (Hà Nội)', native:'Giọng Bắc (Hà Nội)'},
+      {en:'Central (Huế)', native:'Giọng Trung (Huế)'},
+      {en:'Southern (Sài Gòn)', native:'Giọng Nam (Sài Gòn)'},
+  ]},
+  { code:'tl', label:'Tagalog / Filipino', native:'Tagalog', dialects:[
+      {en:'Standard Tagalog', native:'Karaniwang Tagalog'},
+      {en:'Cebuano', native:'Sebwano / Bisaya'},
+      {en:'Ilocano', native:'Ilokano'},
+  ]},
+  { code:'th', label:'Thai', native:'ภาษาไทย', dialects:[
+      {en:'Central (Standard)', native:'ภาษาไทยกลาง (มาตรฐาน)'},
+      {en:'Northern (Lanna)', native:'ภาษาไทยเหนือ (คำเมือง)'},
+      {en:'Isan (Northeastern)', native:'ภาษาอีสาน'},
+      {en:'Southern', native:'ภาษาไทยใต้'},
+  ]},
+];
+
+// Maps our language codes to real BCP-47 tags so iOS/some browsers can
+// auto-suggest the matching keyboard on the guest's input (like Duolingo does).
+// Requires that keyboard to already be installed on their device; not guaranteed
+// on every browser/OS, but Safari on iOS honors this reasonably well.
+const KEYBOARD_LANG_TAG = { ja:'ja', ko:'ko', vi:'vi', tl:'fil', th:'th' };
+function keyboardLangTag(){
+  if(!state.lang || state.lang.code === 'other') return '';
+  if(state.lang.code === 'zh'){
+    const d = state.dialect || '';
+    return (d.includes('Taiwanese') || d.includes('Cantonese')) ? 'zh-Hant' : 'zh-Hans';
+  }
+  return KEYBOARD_LANG_TAG[state.lang.code] || '';
+}
+
+const STATIC_UI = {
+en: {
+  consentTitle: "Hi!",
+  consentBody: "I'm building something to help people talk to each other naturally across language barriers. Want to help me test an early version? I'd love to hear what you think afterward.",
+  yesBtn: "Yes, let's try it", noBtn: "No thanks",
+  declineBody: "No worries at all, thanks for considering it! Have a great night.",
+  namePrompt: "What's your name?", nameContinue: "Start the conversation",
+  inputPlaceholderGuest: "Type in your language...", sendBtn: "Send", endBtn: "End conversation",
+  feedbackTitle: "How was that?",
+  feedbackBody: "Did the translation feel natural? Do you think something like this could actually be useful? Any thoughts are welcome, good or bad.",
+  feedbackPlaceholder: "Share your thoughts...", feedbackSubmit: "Send feedback",
+  translatingLabel: "Translating...", retryLabel: "Tap to retry",
+  thanksTitle: "Thank you!",
+  thanksIntro: "Really appreciate you trying this and sharing your thoughts. Hoping this can make it easier to connect at events like this, especially when English feels like a barrier. This is just an early test. Here's some of what I'm hoping to add:",
+  thanksFeatures: [
+    "Remembering the people you've talked to, so if we cross paths again at an event like this, it can give you a quick summary of who they are and what you talked about before",
+    "Different tone options, like switching between casual with friends or more formal when you've just met someone, so conversations don't all sound the same",
+    "Talking through your own phone instead of passing one back and forth, including the option to just speak instead of type"
+  ],
+  thanksClosing: "If you ever want to reach out about this, or anything else, I'd genuinely love to hear from you. And if more thoughts come to mind later, I'm always happy to hear them.",
+  preparingNote: "Wrapping up your feedback...",
+  finishBtn: "Finish", sentLabel: "Done!", sendingLabel: "Sending...", redirectingLabel: "Returning to start in {n}..."
+},
+tl: {
+  consentTitle: "Hi!",
+  consentBody: "Gumagawa ako ng app na makakatulong sa mga tao na mag-usap nang natural kahit magkaiba ang wika nila. Gusto mo bang tumulong subukan itong unang bersyon? Gustong-gusto kong marinig ang thoughts mo pagkatapos.",
+  yesBtn: "Sige, subukan natin", noBtn: "Salamat na lang",
+  declineBody: "Ayos lang talaga, salamat sa pagconsider! Enjoy sa gabi.",
+  namePrompt: "Ano pangalan mo?", nameContinue: "Simulan ang usapan",
+  inputPlaceholderGuest: "I-type dito sa wika mo...", sendBtn: "Ipadala", endBtn: "Tapusin ang usapan",
+  feedbackTitle: "Kumusta yun?",
+  feedbackBody: "Natural ba yung translation? Sa tingin mo ba magiging useful talaga ito? Lahat ng thoughts okay lang, good or bad.",
+  feedbackPlaceholder: "I-share yung thoughts mo...", feedbackSubmit: "Ipadala ang feedback",
+  translatingLabel: "Nagta-translate...", retryLabel: "Pindutin para subukan ulit",
+  thanksTitle: "Salamat!",
+  thanksIntro: "Talagang appreciate ko na sinubukan mo ito at binahagi ang thoughts mo. Sana makatulong ito para mas madali makisalamuha sa mga event na katulad nito, lalo na kapag mahirap dahil sa English. Unang test pa lang ito, ito yung ilan sa mga plano ko idagdag sa susunod:",
+  thanksFeatures: [
+    "Maaalala nito yung mga taong nakausap mo na, kaya kung magkita tayong muli sa katulad na event, may makukuha kang quick summary kung sino sila at ano yung napag-usapan niyo dati",
+    "Iba't ibang tone options, tulad ng pagpapalit sa casual kapag kaibigan o mas formal kapag bagong kilala pa lang, para hindi parepareho ang dating ng usapan",
+    "Magagamit sa sarili mong phone imbes na palitan lang, pati na rin ang option na magsalita na lang imbes na mag-type"
+  ],
+  thanksClosing: "Kung gusto mo akong i-reach out tungkol dito o kahit ano pa, gustong-gusto ko talaga marinig yun. At kung may maisip ka pa later, laging bukas ako makinig.",
+  preparingNote: "Ini-wrap up pa yung feedback mo...",
+  finishBtn: "Tapos na", sentLabel: "Salamat!", sendingLabel: "Ipinapadala...", redirectingLabel: "Babalik sa simula sa loob ng {n}..."
+},
+ja: {
+  consentTitle: "こんにちは!",
+  consentBody: "言葉の壁を越えて自然に話せるようにするアプリを作っています。初期版を一緒に試してもらえますか?後で感想を聞かせてもらえたら嬉しいです。",
+  yesBtn: "試してみる", noBtn: "今回はやめておく",
+  declineBody: "全然大丈夫です、考えてくれてありがとう!良い夜を。",
+  namePrompt: "お名前は?", nameContinue: "会話を始める",
+  inputPlaceholderGuest: "自分の言葉で入力してください...", sendBtn: "送信", endBtn: "会話を終える",
+  feedbackTitle: "どうでしたか?",
+  feedbackBody: "翻訳は自然に感じましたか?こういうのって実際に役立つと思いますか?良い意見も悪い意見も歓迎です。",
+  feedbackPlaceholder: "感想をどうぞ...", feedbackSubmit: "フィードバックを送る",
+  translatingLabel: "翻訳中...", retryLabel: "タップして再試行",
+  thanksTitle: "ありがとう!",
+  thanksIntro: "試してくれて、感想も聞かせてくれて本当にありがとう。こういうイベントで、英語が壁に感じるときでも繋がりやすくなればと思っています。これはまだ初期のテストです。今後追加を考えているのはこんな感じです。",
+  thanksFeatures: [
+    "話した相手を覚えておく機能。こういうイベントでまた会ったときに、相手が誰で前に何を話したか簡単に振り返れるようにする",
+    "トーンを選べる機能。友達とは気軽に、初対面の人にはもう少し丁寧にと、話す相手によって変えられるようにする",
+    "スマホを渡し合わなくても、それぞれの端末で話せるようにする機能。タイプの代わりに話すだけでもいいようにする"
+  ],
+  thanksClosing: "これについて、他のことでも連絡してくれたら嬉しいです。後でまた何か思いついたら、いつでも聞かせてください。",
+  preparingNote: "フィードバックをまとめています...",
+  finishBtn: "完了", sentLabel: "ありがとう!", sendingLabel: "送信中...", redirectingLabel: "{n}秒後に最初の画面に戻ります..."
+},
+ko: {
+  consentTitle: "안녕하세요!",
+  consentBody: "언어 장벽 없이 자연스럽게 대화할 수 있도록 도와주는 앱을 만들고 있어요. 초기 버전을 같이 테스트해볼래요? 나중에 어떻게 생각하는지 들려주면 좋겠어요.",
+  yesBtn: "네, 해볼게요", noBtn: "괜찮아요",
+  declineBody: "전혀 상관없어요, 고려해줘서 고마워요! 좋은 밤 되세요.",
+  namePrompt: "이름이 뭐예요?", nameContinue: "대화 시작하기",
+  inputPlaceholderGuest: "본인 언어로 입력하세요...", sendBtn: "보내기", endBtn: "대화 종료",
+  feedbackTitle: "어땠어요?",
+  feedbackBody: "번역이 자연스러웠나요? 이런 게 실제로 유용할 것 같아요? 좋은 의견이든 안 좋은 의견이든 다 환영이에요.",
+  feedbackPlaceholder: "생각을 남겨주세요...", feedbackSubmit: "피드백 보내기",
+  translatingLabel: "번역 중...", retryLabel: "탭해서 다시 시도",
+  thanksTitle: "고마워요!",
+  thanksIntro: "시도해주고 생각도 나눠줘서 정말 고마워요. 이런 행사에서 영어가 장벽처럼 느껴질 때도 더 쉽게 어울릴 수 있으면 좋겠어요. 이건 아직 초기 테스트예요. 앞으로 추가하고 싶은 건 이런 것들이에요.",
+  thanksFeatures: [
+    "이야기했던 사람을 기억하는 기능. 이런 행사에서 다시 만나면 그 사람이 누구고 전에 무슨 얘기했는지 간단히 떠올릴 수 있게",
+    "말투를 고를 수 있는 기능. 친구랑은 편하게, 처음 만난 사람이랑은 좀 더 정중하게, 상대에 따라 다르게 말할 수 있도록",
+    "폰을 서로 주고받지 않고 각자 폰으로 대화할 수 있는 기능. 타이핑 대신 말로도 할 수 있게"
+  ],
+  thanksClosing: "이것에 대해서든 다른 일이든 연락하고 싶으면 언제든 환영이에요. 나중에 또 생각나는 게 있으면 언제든 들려주세요.",
+  preparingNote: "피드백을 정리하고 있어요...",
+  finishBtn: "완료", sentLabel: "감사해요!", sendingLabel: "전송 중...", redirectingLabel: "{n}초 후 처음 화면으로 돌아갑니다..."
+},
+vi: {
+  consentTitle: "Chào bạn!",
+  consentBody: "Mình đang làm một ứng dụng giúp mọi người trò chuyện tự nhiên hơn dù khác ngôn ngữ. Bạn có muốn thử bản đầu tiên với mình không? Sau đó mình rất muốn nghe suy nghĩ của bạn.",
+  yesBtn: "Được, thử xem sao", noBtn: "Thôi khỏi",
+  declineBody: "Không sao cả, cảm ơn bạn đã cân nhắc nhé! Chúc bạn buổi tối vui vẻ.",
+  namePrompt: "Bạn tên gì?", nameContinue: "Bắt đầu trò chuyện",
+  inputPlaceholderGuest: "Gõ bằng ngôn ngữ của bạn...", sendBtn: "Gửi", endBtn: "Kết thúc trò chuyện",
+  feedbackTitle: "Thấy sao rồi?",
+  feedbackBody: "Bản dịch có tự nhiên không? Bạn nghĩ cái này có thực sự hữu ích không? Ý kiến gì cũng được, khen hay chê đều okay.",
+  feedbackPlaceholder: "Chia sẻ suy nghĩ của bạn...", feedbackSubmit: "Gửi phản hồi",
+  translatingLabel: "Đang dịch...", retryLabel: "Chạm để thử lại",
+  thanksTitle: "Cảm ơn bạn!",
+  thanksIntro: "Thật sự cảm ơn bạn đã thử và chia sẻ suy nghĩ. Mong là điều này giúp mọi người kết nối dễ hơn ở những sự kiện như thế này, nhất là khi tiếng Anh là một rào cản. Đây mới chỉ là bản thử nghiệm đầu tiên. Đây là một số thứ mình đang muốn thêm vào sau này.",
+  thanksFeatures: [
+    "Nhớ những người mình đã trò chuyện, để nếu gặp lại nhau ở một sự kiện tương tự, bạn có thể xem nhanh họ là ai và trước đó đã nói chuyện gì",
+    "Nhiều lựa chọn giọng điệu, như chuyển giữa thân mật khi nói với bạn bè hoặc trang trọng hơn khi mới gặp ai đó, để cuộc trò chuyện không nghe giống nhau hết",
+    "Trò chuyện trên điện thoại riêng của mỗi người thay vì phải đưa qua đưa lại, kể cả lựa chọn nói thay vì gõ chữ"
+  ],
+  thanksClosing: "Nếu bạn muốn liên hệ với mình về chuyện này, hay bất cứ chuyện gì khác, mình rất muốn nghe. Sau này nếu nghĩ ra thêm gì, mình luôn sẵn sàng lắng nghe.",
+  preparingNote: "Đang hoàn thiện phản hồi của bạn...",
+  finishBtn: "Hoàn tất", sentLabel: "Cảm ơn bạn!", sendingLabel: "Đang gửi...", redirectingLabel: "Quay lại màn hình đầu sau {n} giây..."
+},
+zh: {
+  consentTitle: "你好!",
+  consentBody: "我在做一个能帮助大家跨越语言障碍自然聊天的应用。想不想帮我试试早期版本?之后我很想听听你的想法。",
+  yesBtn: "好啊,试试看", noBtn: "不用了,谢谢",
+  declineBody: "完全没关系,谢谢你考虑一下!祝你今晚愉快。",
+  namePrompt: "你叫什么名字?", nameContinue: "开始对话",
+  inputPlaceholderGuest: "用你的语言输入...", sendBtn: "发送", endBtn: "结束对话",
+  feedbackTitle: "感觉怎么样?",
+  feedbackBody: "翻译听起来自然吗?你觉得这种东西真的有用吗?什么想法都欢迎,好的坏的都可以。",
+  feedbackPlaceholder: "分享你的想法...", feedbackSubmit: "发送反馈",
+  translatingLabel: "翻译中...", retryLabel: "点击重试",
+  thanksTitle: "谢谢你!",
+  thanksIntro: "真的很感谢你愿意尝试并分享想法。希望这能让大家在这类活动上更容易交流,尤其是英语让人觉得有障碍的时候。这还只是早期测试,以下是我之后想加上的一些功能。",
+  thanksFeatures: [
+    "记住聊过的人,这样如果在类似的活动上再次遇到,可以快速回想起对方是谁、之前聊过什么",
+    "可以选择语气,比如和朋友聊天时随意一点,刚认识的人就正式一点,这样对话不会每次听起来都一样",
+    "不用来回传手机,各自用自己的手机聊天,也可以选择直接说话而不是打字"
+  ],
+  thanksClosing: "如果你想就这件事,或者任何别的事联系我,我都很乐意听到你的消息。以后想到什么也随时欢迎告诉我。",
+  preparingNote: "正在整理你的反馈...",
+  finishBtn: "完成", sentLabel: "谢谢!", sendingLabel: "发送中...", redirectingLabel: "{n}秒后返回首页..."
+},
+th: {
+  consentTitle: "สวัสดี!",
+  consentBody: "กำลังทำแอปที่ช่วยให้คนคุยกันได้อย่างเป็นธรรมชาติแม้พูดคนละภาษา อยากลองเวอร์ชันแรกด้วยกันไหม หลังจากนั้นอยากฟังความคิดเห็นมากๆ เลย",
+  yesBtn: "โอเค ลองดู", noBtn: "ขอบคุณ ไม่เป็นไร",
+  declineBody: "ไม่เป็นไรเลย ขอบคุณที่พิจารณานะ ขอให้มีค่ำคืนที่ดี",
+  namePrompt: "ชื่ออะไร?", nameContinue: "เริ่มบทสนทนา",
+  inputPlaceholderGuest: "พิมพ์เป็นภาษาของคุณ...", sendBtn: "ส่ง", endBtn: "จบบทสนทนา",
+  feedbackTitle: "เป็นยังไงบ้าง?",
+  feedbackBody: "คำแปลฟังดูเป็นธรรมชาติไหม คิดว่าแอปแบบนี้มีประโยชน์จริงไหม ความเห็นแบบไหนก็ยินดีรับฟังหมด",
+  feedbackPlaceholder: "แชร์ความคิดเห็น...", feedbackSubmit: "ส่งความคิดเห็น",
+  translatingLabel: "กำลังแปล...", retryLabel: "แตะเพื่อลองใหม่",
+  thanksTitle: "ขอบคุณมาก!",
+  thanksIntro: "ขอบคุณจริงๆ ที่ลองใช้และแชร์ความคิดเห็น หวังว่าสิ่งนี้จะช่วยให้เชื่อมต่อกับคนอื่นในงานแบบนี้ได้ง่ายขึ้น โดยเฉพาะตอนที่ภาษาอังกฤษรู้สึกเป็นอุปสรรค นี่ยังเป็นแค่การทดสอบช่วงแรก นี่คือบางอย่างที่อยากเพิ่มในอนาคต",
+  thanksFeatures: [
+    "จำคนที่เคยคุยด้วย ถ้าเจอกันอีกในงานแบบนี้ ก็จะสรุปให้เร็วๆ ว่าเขาเป็นใครและเคยคุยอะไรกันไว้",
+    "เลือกโทนการพูดได้ เช่น พูดแบบสบายๆ กับเพื่อน หรือสุภาพขึ้นกับคนที่เพิ่งรู้จัก เพื่อให้บทสนทนาไม่ฟังดูเหมือนกันหมด",
+    "คุยผ่านมือถือของแต่ละคนแทนที่จะต้องส่งเครื่องเดียวไปมา รวมถึงตัวเลือกให้พูดแทนการพิมพ์ได้ด้วย"
+  ],
+  thanksClosing: "ถ้าอยากติดต่อเรื่องนี้หรือเรื่องอื่นก็ยินดีมากๆ ถ้ามีความคิดอะไรเพิ่มเติมทีหลังก็ยินดีรับฟังเสมอ",
+  preparingNote: "กำลังสรุปความคิดเห็นของคุณ...",
+  finishBtn: "เสร็จสิ้น", sentLabel: "ขอบคุณ!", sendingLabel: "กำลังส่ง...", redirectingLabel: "กลับไปหน้าแรกใน {n} วินาที..."
+}
+};
+
+/* ============ STATE ============ */
+function freshState(){
+  return {
+    screen: 'language',
+    lang: null, dialect: null, customLang: '',
+    ui: null, name: '', turn: 'guest', messages: [],
+    feedbackText: '', feedbackTranslatedToEnglish: '', feedbackPending: false
+  };
+}
+let state = freshState();
+let msgIdCounter = 0;
+
+(function restore(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(raw){
+      const saved = JSON.parse(raw);
+      if(saved && saved.screen && !saved.screen.startsWith('loading')){
+        state = saved;
+        if(state.messages){
+          state.messages.forEach(m => {
+            if(m.status === 'pending') m.status = 'error'; // was mid-flight when closed
+            const n = parseInt((m.id||'m0').slice(1)) || 0;
+            if(n > msgIdCounter) msgIdCounter = n;
+          });
+        }
+        if(state.screen === 'thanks' && state.feedbackPending){
+          state.feedbackPending = false;
+          if(!state.feedbackTranslatedToEnglish) state.feedbackTranslatedToEnglish = state.feedbackText || '(no feedback entered)';
+        }
+      }
+    }
+  }catch(e){}
+})();
+
+const app = document.getElementById('app');
+
+/* ============ CLAUDE CALL (dynamic conversation + feedback translation only) ============ */
+async function callClaude(system, userText){
+  const res = await fetch("https://api.anthropic.com/v1/messages", {
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({
+      model: CLAUDE_MODEL, max_tokens: 1000, system: system,
+      messages: [{role:"user", content: userText}]
+    })
+  });
+  if(!res.ok) throw new Error("API error " + res.status);
+  const data = await res.json();
+  const text = (data.content||[]).map(b=>b.text||"").join("").trim();
+  if(!text) throw new Error("Empty response");
+  return text;
+}
+
+function langName(){
+  return state.lang.code === 'other' ? state.customLang : state.lang.label;
+}
+
+async function translateUIStrings(){
+  const system = `You translate short UI strings for a casual, friendly conversation-translator app into ${langName()}. Write the way real bilingual native speakers actually talk day-to-day, natural code-switching with English is fine if that is genuinely how people commonly speak this language, but lean more on ${langName()} than English overall. Avoid stiff, textbook, or overly formal phrasing, it should read like a text from a friend. Never use em dashes, use commas, periods, or parentheses instead. Do not reference "tonight" or any single specific event, keep the wording generally applicable over time. Some values are arrays of short bullet phrases, translate every element and keep the same array structure. Return ONLY a valid JSON object with exactly the same keys as given. No markdown fences, no commentary, nothing else.`;
+  const userText = JSON.stringify(STATIC_UI.en);
+  const raw = await callClaude(system, userText);
+  const cleaned = raw.replace(/^```json\s*/,'').replace(/```$/,'').trim();
+  try{ return JSON.parse(cleaned); }
+  catch(e){ console.error("UI translation parse failed, falling back to English", e, raw); return STATIC_UI.en; }
+}
+
+async function getUIStrings(){
+  if(state.lang.code !== 'other' && STATIC_UI[state.lang.code]){
+    return STATIC_UI[state.lang.code]; // zero LLM calls
+  }
+  const key = UI_CACHE_PREFIX + (state.customLang||'');
+  try{ const cached = localStorage.getItem(key); if(cached) return JSON.parse(cached); }catch(e){}
+  const result = await translateUIStrings();
+  try{ localStorage.setItem(key, JSON.stringify(result)); }catch(e){}
+  return result;
+}
+
+async function translateMessage(text, direction){
+  const dialectPart = state.dialect ? ` (${state.dialect} dialect/register)` : '';
+  const historyLines = state.messages
+    .filter(m => m.status === 'done')
+    .slice(-6)
+    .map(m => `${m.sender === 'host' ? 'Host' : 'Guest'}: ${m.translated}`)
+    .join('\n');
+
+  const system = `You are a live interpreter helping two people have a casual, natural conversation, not a formal document translator. Translate the way real native speakers actually talk day-to-day, including natural code-switching with English where that's genuinely how bilingual speakers of this language talk, only where it's authentic, don't force it in. Avoid stiff or textbook phrasing. Never use em dashes, use commas, periods, or parentheses instead. Use the conversation history only for tone and context continuity. Respond with ONLY the translated text. No notes, no quotation marks, no explanation.`;
+
+  const instruction = direction === 'toEnglish'
+    ? `Conversation so far:\n${historyLines}\n\nTranslate this new message from ${langName()}${dialectPart} into natural, casual English:\n\n${text}`
+    : `Conversation so far:\n${historyLines}\n\nTranslate this new message from casual English into natural, casual ${langName()}${dialectPart}:\n\n${text}`;
+
+  return await callClaude(system, instruction);
+}
+
+/* ============ RENDER HELPERS ============ */
+function markSVG(){
+  return `<svg viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="9" cy="9" r="7.5" stroke="url(#g1)" stroke-width="1.6"/>
+    <circle cx="17" cy="17" r="7.5" stroke="url(#g2)" stroke-width="1.6"/>
+    <defs>
+      <linearGradient id="g1" x1="1" y1="1" x2="17" y2="17"><stop stop-color="#ff8b5e"/><stop offset="1" stop-color="#f2c14e"/></linearGradient>
+      <linearGradient id="g2" x1="9" y1="9" x2="25" y2="25"><stop stop-color="#f2c14e"/><stop offset="1" stop-color="#ff8b5e"/></linearGradient>
+    </defs>
+  </svg>`;
+}
+function markHeader(label){
+  return `<div class="mark">
+    <div class="mark-left">${markSVG()}<span class="label">${label}</span></div>
+    <span class="start-over" id="startOverLink">Start over</span>
+  </div>`;
+}
+
+/* ============ SCREENS ============ */
+function renderLanguageScreen(){
+  const items = LANGUAGES.map(l => `
+    <div class="lang-btn ${state.lang && state.lang.code===l.code ? 'selected':''}" data-code="${l.code}">
+      <span class="lang-native">${l.native}</span>
+      <span class="lang-eng">${l.label}</span>
+    </div>
+  `).join('');
+
+  const dialectOptions = state.lang && state.lang.code !== 'other'
+    ? state.lang.dialects.map(d => `<option value="${d.en}" ${state.dialect===d.en?'selected':''}>${d.native} — ${d.en}</option>`).join('')
+    : '';
+
+  app.innerHTML = `
+    ${markHeader('talk — live translator')}
+    <h1>Pick your language</h1>
+    <p class="sub">This helps us get the tone and dialect right for you.</p>
+    <div class="lang-grid">
+      ${items}
+      <div class="lang-btn other ${state.lang && state.lang.code==='other' ? 'selected':''}" data-code="other">
+        <span class="lang-native">Other</span>
+        <span class="lang-eng">Type it in</span>
+      </div>
+    </div>
+    ${state.lang && state.lang.code === 'other' ? `
+      <label class="field-label">Type your language</label>
+      <input type="text" id="customLangInput" placeholder="e.g. Bahasa Indonesia" value="${state.customLang}">
+    ` : ''}
+    ${state.lang ? `
+      <label class="field-label">Dialect / regional style (optional)</label>
+      ${state.lang.code === 'other'
+        ? `<input type="text" id="customDialectInput" placeholder="Optional — e.g. a specific region" value="${state.dialect || ''}">`
+        : `<select id="dialectSelect">${dialectOptions}</select>`
+      }
+      <p class="hint">This helps the translation match how people actually speak where you're from. It's already set to standard, only change it if a specific dialect fits you better.</p>
+    ` : ''}
+    <button class="btn btn-primary" id="continueBtn" ${!canContinueLang() ? 'disabled' : ''}>Continue</button>
+  `;
+
+  document.querySelectorAll('.lang-btn').forEach(el => {
+    el.addEventListener('click', () => {
+      const code = el.dataset.code;
+      if(code === 'other'){ state.lang = {code:'other', label:'Other', dialects:[]}; state.dialect = ''; }
+      else { state.lang = LANGUAGES.find(l=>l.code===code); state.dialect = state.lang.dialects[0].en; }
+      render();
+    });
+  });
+  const customInput = document.getElementById('customLangInput');
+  if(customInput) customInput.addEventListener('input', e => { state.customLang = e.target.value; refreshContinueBtn(); });
+  const dialectSelect = document.getElementById('dialectSelect');
+  if(dialectSelect) dialectSelect.addEventListener('change', e => { state.dialect = e.target.value; });
+  const customDialect = document.getElementById('customDialectInput');
+  if(customDialect) customDialect.addEventListener('input', e => { state.dialect = e.target.value; });
+
+  document.getElementById('continueBtn').addEventListener('click', async () => {
+    state.screen = 'loadingConsent';
+    render();
+    state.ui = await getUIStrings();
+    state.screen = 'consent';
+    render();
+  });
+}
+function canContinueLang(){
+  if(!state.lang) return false;
+  if(state.lang.code === 'other') return state.customLang.trim().length > 0;
+  return true;
+}
+function refreshContinueBtn(){ const btn = document.getElementById('continueBtn'); if(btn) btn.disabled = !canContinueLang(); }
+
+function renderLoading(msg){
+  app.innerHTML = `${markHeader('talk — live translator')}<div class="loading"><div class="pulse"></div><div>${msg}</div></div>`;
+}
+
+function renderConsent(){
+  app.innerHTML = `
+    ${markHeader('talk — live translator')}
+    <div class="screen">
+      <h1>${state.ui.consentTitle}</h1>
+      <p class="sub">${state.ui.consentBody}</p>
+      <div class="grow"></div>
+      <button class="btn btn-primary" id="yesBtn">${state.ui.yesBtn}</button>
+      <button class="btn btn-ghost" id="noBtn">${state.ui.noBtn}</button>
+    </div>
+  `;
+  document.getElementById('yesBtn').addEventListener('click', () => { state.screen='name'; render(); });
+  document.getElementById('noBtn').addEventListener('click', () => { state.screen='declined'; render(); });
+}
+
+function renderDeclined(){
+  app.innerHTML = `
+    ${markHeader('talk — live translator')}
+    <div class="screen">
+      <h1>${state.ui.declineBody}</h1>
+      <div class="grow"></div>
+      <button class="btn btn-ghost" id="restartBtn">Back to start</button>
+    </div>
+  `;
+  document.getElementById('restartBtn').addEventListener('click', resetApp);
+}
+
+function renderName(){
+  app.innerHTML = `
+    ${markHeader('talk — live translator')}
+    <h1>${state.ui.namePrompt}</h1>
+    <input type="text" id="nameInput" placeholder="Name" value="${state.name}">
+    <button class="btn btn-primary" id="nameContinueBtn" ${state.name.trim() ? '' : 'disabled'}>${state.ui.nameContinue}</button>
+  `;
+  const input = document.getElementById('nameInput');
+  input.addEventListener('input', e => {
+    state.name = e.target.value;
+    document.getElementById('nameContinueBtn').disabled = !state.name.trim();
+  });
+  document.getElementById('nameContinueBtn').addEventListener('click', () => { state.screen = 'chat'; render(); });
+}
+
+function bubbleHtml(m){
+  if(m.status === 'pending'){
+    return `<div class="msg ${m.sender}">
+      <div class="translating"><span class="dot"></span><span class="dot"></span><span class="dot"></span>&nbsp;${state.ui.translatingLabel}</div>
+      <div class="orig">${m.original}</div>
+    </div>`;
+  }
+  if(m.status === 'error'){
+    return `<div class="msg ${m.sender} error" data-id="${m.id}">
+      <div class="error-text">⟳ ${state.ui.retryLabel}</div>
+      <div class="orig">${m.original}</div>
+    </div>`;
+  }
+  return `<div class="msg ${m.sender}"><div>${m.translated}</div><div class="orig">${m.original}</div></div>`;
+}
+
+async function doTranslate(msgId, text, direction){
+  try{
+    const translated = await translateMessage(text, direction);
+    const m = state.messages.find(x=>x.id===msgId);
+    if(m){ m.translated = translated; m.status = 'done'; }
+  }catch(e){
+    const m = state.messages.find(x=>x.id===msgId);
+    if(m){ m.status = 'error'; }
+  }
+  render();
+}
+
+function renderChat(){
+  const guestLabel = state.name || 'Guest';
+  const bubbles = state.messages.map(bubbleHtml).join('');
+  const kbTag = state.turn === 'guest' ? keyboardLangTag() : 'en';
+
+  app.innerHTML = `
+    ${markHeader('talk — live translator')}
+    <div class="turn-toggle">
+      <div class="turn-btn ${state.turn==='guest'?'active':''}" data-turn="guest">${guestLabel}</div>
+      <div class="turn-btn ${state.turn==='host'?'active':''}" data-turn="host">Host</div>
+    </div>
+    <div class="messages" id="messages">${bubbles}</div>
+    <div class="chat-input-row">
+      <textarea id="chatInput" ${kbTag ? `lang="${kbTag}"` : ''} placeholder="${state.turn==='guest' ? state.ui.inputPlaceholderGuest : 'Type in English...'}"></textarea>
+      <button class="send-btn" id="sendBtn">↑</button>
+    </div>
+    <div class="end-link" id="endLink">${state.ui.endBtn}</div>
+  `;
+
+  document.querySelectorAll('.turn-btn').forEach(el => {
+    el.addEventListener('click', () => { state.turn = el.dataset.turn; render(); });
+  });
+
+  const msgBox = document.getElementById('messages');
+  msgBox.scrollTop = msgBox.scrollHeight;
+
+  document.querySelectorAll('.msg.error').forEach(el => {
+    el.addEventListener('click', () => {
+      const id = el.dataset.id;
+      const m = state.messages.find(x=>x.id===id);
+      if(!m) return;
+      m.status = 'pending';
+      render();
+      const direction = m.sender === 'guest' ? 'toEnglish' : 'fromEnglish';
+      doTranslate(id, m.original, direction);
+    });
+  });
+
+  const chatInput = document.getElementById('chatInput');
+  const sendBtn = document.getElementById('sendBtn');
+
+  function send(){
+    const text = chatInput.value.trim();
+    if(!text) return;
+    chatInput.value = '';
+    const direction = state.turn === 'guest' ? 'toEnglish' : 'fromEnglish';
+    const msgId = 'm' + (++msgIdCounter);
+    state.messages.push({ id: msgId, sender: state.turn, original: text, translated: null, status: 'pending' });
+    render();
+    doTranslate(msgId, text, direction);
+  }
+
+  sendBtn.addEventListener('click', send);
+  chatInput.addEventListener('keydown', e => {
+    if(e.key === 'Enter' && !e.shiftKey){ e.preventDefault(); send(); }
+  });
+
+  document.getElementById('endLink').addEventListener('click', () => { state.screen = 'feedback'; render(); });
+}
+
+function renderFeedback(){
+  app.innerHTML = `
+    ${markHeader('talk — live translator')}
+    <h1>${state.ui.feedbackTitle}</h1>
+    <p class="sub">${state.ui.feedbackBody}</p>
+    <textarea id="feedbackInput" placeholder="${state.ui.feedbackPlaceholder}"></textarea>
+    <button class="btn btn-primary" id="feedbackSubmitBtn">${state.ui.feedbackSubmit}</button>
+  `;
+  document.getElementById('feedbackSubmitBtn').addEventListener('click', () => {
+    state.feedbackText = document.getElementById('feedbackInput').value.trim();
+    state.feedbackPending = true;
+    state.feedbackTranslatedToEnglish = '';
+    state.screen = 'thanks';
+    render();
+
+    (async () => {
+      try{
+        state.feedbackTranslatedToEnglish = state.feedbackText
+          ? await translateMessage(state.feedbackText, 'toEnglish')
+          : '(no feedback entered)';
+      }catch(e){
+        state.feedbackTranslatedToEnglish = state.feedbackText || '(no feedback entered)';
+      }
+      state.feedbackPending = false;
+      render();
+    })();
+  });
+}
+
+/* Pure template formatting, no LLM call, no tokens spent here.
+   Tries the Vercel + Resend API route first (silent, no mail app popup).
+   Falls back to opening the device's mail app only if that API isn't
+   reachable yet (e.g. this file opened directly, not deployed to Vercel). */
+function buildEmailContent(){
+  const line = '-'.repeat(30);
+  const guestLabel = state.name || 'Guest';
+  const header = `TALK conversation summary\n${line}\nTester: ${guestLabel}\nLanguage: ${langName()}${state.dialect ? ' (' + state.dialect + ')' : ''}\n${line}\n`;
+  const convo = state.messages
+    .filter(m => m.status === 'done')
+    .map(m => {
+      const who = m.sender === 'host' ? 'Host' : guestLabel;
+      return `\n${who}\n  ${m.translated}\n  (original: ${m.original})`;
+    }).join('\n');
+  const feedback = `\n\n${line}\nFeedback from ${guestLabel}\n  ${state.feedbackTranslatedToEnglish || '(pending)'}\n  (original: ${state.feedbackText || '(none)'})\n${line}`;
+  const subject = `Talk feedback - ${guestLabel} (${langName()})`;
+  return { subject, body: header + convo + feedback };
+}
+
+async function sendFeedbackEmail(){
+  const { subject, body } = buildEmailContent();
+  try{
+    const res = await fetch('/api/send-feedback', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ subject, body })
+    });
+    if(!res.ok) throw new Error('API responded ' + res.status);
+    return true; // sent silently via Resend, no app opened
+  }catch(e){
+    // API not deployed yet (e.g. testing the raw file) - fall back to mailto
+    const mailLink = `mailto:${HOST_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    window.location.href = mailLink;
+    return false;
+  }
+}
+
+function renderThanks(){
+  const featuresHtml = (state.ui.thanksFeatures || []).map(f => `<li>${f}</li>`).join('');
+  const banner = state.feedbackPending
+    ? `<div class="banner"><span class="dot"></span><span class="dot"></span><span class="dot"></span>&nbsp;${state.ui.preparingNote}</div>`
+    : '';
+
+  app.innerHTML = `
+    ${markHeader('talk — live translator')}
+    <div class="screen">
+      <div class="thanks-icon">🙏</div>
+      <h1>${state.ui.thanksTitle}</h1>
+      ${banner}
+      <p class="sub">${state.ui.thanksIntro}</p>
+      <ul class="feature-list">${featuresHtml}</ul>
+      <p class="sub">${state.ui.thanksClosing}</p>
+      <div class="grow"></div>
+      <button class="btn btn-primary" id="finishBtn" ${state.feedbackPending ? 'disabled' : ''}>${state.ui.finishBtn}</button>
+      <p class="hint" id="redirectHint" style="text-align:center;min-height:16px;"></p>
+    </div>
+  `;
+
+  const btn = document.getElementById('finishBtn');
+  const hint = document.getElementById('redirectHint');
+  btn.addEventListener('click', async () => {
+    if(btn.disabled) return;
+    btn.disabled = true;
+    btn.textContent = state.ui.sendingLabel;
+    await sendFeedbackEmail();
+    btn.textContent = state.ui.sentLabel;
+    let secondsLeft = 5;
+    const tick = () => { hint.textContent = (state.ui.redirectingLabel || '').replace('{n}', secondsLeft); };
+    tick();
+    const timer = setInterval(() => {
+      secondsLeft -= 1;
+      if(secondsLeft <= 0){ clearInterval(timer); resetApp(); } else tick();
+    }, 1000);
+  });
+}
+
+function resetApp(){
+  try{ localStorage.removeItem(STORAGE_KEY); }catch(e){}
+  state = freshState();
+  render();
+}
+
+/* ============ ROUTER ============ */
+function saveState(){
+  if(state.screen.startsWith('loading')) return;
+  try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }catch(e){}
+}
+function render(){
+  saveState();
+  switch(state.screen){
+    case 'language': renderLanguageScreen(); break;
+    case 'loadingConsent': renderLoading('Getting things ready...'); break;
+    case 'consent': renderConsent(); break;
+    case 'declined': renderDeclined(); break;
+    case 'name': renderName(); break;
+    case 'chat': renderChat(); break;
+    case 'feedback': renderFeedback(); break;
+    case 'thanks': renderThanks(); break;
+    default: renderLanguageScreen();
+  }
+  const soEl = document.getElementById('startOverLink');
+  if(soEl) soEl.addEventListener('click', resetApp);
+}
+
+render();
+</script>
+</body>
+</html>
