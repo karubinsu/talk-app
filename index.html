@@ -516,10 +516,11 @@ const app = document.getElementById('app');
 const PROVIDER_STORAGE_KEY = "talk_provider_choice_v1";
 const PROVIDER_OPTIONS = [
   { value: 'auto',                      label: 'Auto (Smart Fallback)' },
-  { value: 'gemini-3.6-flash',          label: 'Force Gemini 3.6 Flash' },
-  { value: 'gemini-3.5-flash',          label: 'Force Gemini 3.5 Flash' },
-  { value: 'llama-3.3-70b-versatile',   label: 'Force Groq Llama 3.3 70B Versatile' },
-  { value: 'llama-3.1-8b-instant',      label: 'Force Groq Llama 3.1 8B Instant' },
+  { value: 'gemini-3.6-flash',          label: 'Gemini 3.6 Flash' },
+  { value: 'gemini-3.5-flash-lite',     label: 'Gemini 3.5 Flash-Lite' },
+  { value: 'gemini-3.5-flash',          label: 'Gemini 3.5 Flash' },
+  { value: 'llama-3.3-70b-versatile',   label: 'Groq Llama 3.3 70B Versatile' },
+  { value: 'llama-3.1-8b-instant',      label: 'Groq Llama 3.1 8B Instant' },
 ];
 
 function getProviderChoice(){
@@ -660,8 +661,8 @@ function showDevDrawer(){
   ).join('');
   overlay.innerHTML = `
     <div class="modal-card">
-      <p>Developer settings</p>
-      <label class="field-label">AI provider</label>
+      <p>Opciones de desarollador</p>
+      <label class="field-label">Agente de idioma</label>
       <select id="devProviderSelect">${optionsHtml}</select>
       <div class="modal-row" style="margin-top:16px;">
         <button class="modal-cancel" id="devClose">Close</button>

@@ -16,6 +16,7 @@ module.exports = async (req, res) => {
   // ---- Model registry ----
   const MODELS = {
     'gemini-3.6-flash':        { type: 'gemini', model: 'gemini-3.6-flash' },
+    'gemini-3.5-flash-lite':   { type: 'gemini', model: 'gemini-3.5-flash-lite' },
     'gemini-3.5-flash':        { type: 'gemini', model: 'gemini-3.5-flash' },
     'llama-3.3-70b-versatile': { type: 'groq',   model: 'llama-3.3-70b-versatile' },
     'llama-3.1-8b-instant':    { type: 'groq',   model: 'llama-3.1-8b-instant' },
@@ -24,6 +25,7 @@ module.exports = async (req, res) => {
   // Order used when provider === 'auto'
   const FALLBACK_CHAIN = [
     'gemini-3.6-flash',
+    'gemini-3.5-flash-lite',
     'gemini-3.5-flash',
     'llama-3.3-70b-versatile',
     'llama-3.1-8b-instant',
