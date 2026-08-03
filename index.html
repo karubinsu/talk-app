@@ -512,12 +512,29 @@ const app = document.getElementById('app');
   return text;
 }*/
 
-/* ============ GEMINI API CALL ============ */
-async function callGemini(system, userText) {
+/* ============ AI API CALL (Gemini + Groq, with dev-selectable provider) ============ */
+const PROVIDER_STORAGE_KEY = "talk_provider_choice_v1";
+const PROVIDER_OPTIONS = [
+  { value: 'auto',                      label: 'Auto (Smart Fallback)' },
+  { value: 'gemini-3.6-flash',          label: 'Force Gemini 3.6 Flash' },
+  { value: 'gemini-3.5-flash',          label: 'Force Gemini 3.5 Flash' },
+  { value: 'llama-3.3-70b-versatile',   label: 'Force Groq Llama 3.3 70B Versatile' },
+  { value: 'llama-3.1-8b-instant',      label: 'Force Groq Llama 3.1 8B Instant' },
+];
+
+function getProviderChoice(){
+  try{ return localStorage.getItem(PROVIDER_STORAGE_KEY) || 'auto'; }catch(e){ return 'auto'; }
+}
+function setProviderChoice(value){
+  try{ localStorage.setItem(PROVIDER_STORAGE_KEY, value); }catch(e){}
+}
+
+async function callAI(system, userText) {
+  const provider = getProviderChoice();
   const res = await fetch("/api/translate", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ system, userText })
+    body: JSON.stringify({ system, userText, provider })
   });
 
   if (!res.ok) {
@@ -527,6 +544,7 @@ async function callGemini(system, userText) {
 
   const data = await res.json();
   if (!data.text) throw new Error("Empty response");
+  // data.usedModel tells us which model actually answered (useful for debugging/dev drawer)
   return data.text;
 }
 
@@ -538,7 +556,7 @@ async function translateUIStrings(){
   const system = `You translate short UI strings for a casual, friendly conversation-translator app into ${langName()}. Write the way real bilingual native speakers actually talk day-to-day, natural code-switching with English is fine if that is genuinely how people commonly speak this language, but lean more on ${langName()} than English overall. Avoid stiff, textbook, or overly formal phrasing, it should read like a text from a friend. Never use em dashes, use commas, periods, or parentheses instead. Do not reference "tonight" or any single specific event, keep the wording generally applicable over time. Some values are arrays of short bullet phrases, translate every element and keep the same array structure. Return ONLY a valid JSON object with exactly the same keys as given. No markdown fences, no commentary, nothing else.`;
   const userText = JSON.stringify(STATIC_UI.en.base);
  // Replace: const raw = await callClaude(system, userText);
-const raw = await callGemini(system, userText);
+const raw = await callAI(system, userText);
   const cleaned = raw.replace(/^```json\s*/,'').replace(/```$/,'').trim();
   try{ return JSON.parse(cleaned); }
   catch(e){ console.error("UI translation parse failed, falling back to English", e, raw); return STATIC_UI.en.base; }
@@ -577,7 +595,7 @@ async function translateMessage(text, direction){
     : `Conversation so far:\n${historyLines}\n\nTranslate this new message from casual English into natural, casual ${langName()}${dialectPart}:\n\n${text}`;
 
   // Replace: return await callClaude(system, instruction);
-  return await callGemini(system, instruction);
+  return await callAI(system, instruction);
 }
 
 /* ============ RENDER HELPERS ============ */
@@ -618,6 +636,42 @@ function showConfirmModal(message, onConfirm){
   document.body.appendChild(overlay);
   document.getElementById('modalCancel').addEventListener('click', () => overlay.remove());
   document.getElementById('modalConfirm').addEventListener('click', () => { overlay.remove(); onConfirm(); });
+}
+
+/* ============ SECRET DEVELOPER DRAWER (5 taps on header) ============ */
+let devTapCount = 0;
+let devTapTimer = null;
+function handleHeaderTap(){
+  devTapCount++;
+  clearTimeout(devTapTimer);
+  devTapTimer = setTimeout(() => { devTapCount = 0; }, 1500);
+  if(devTapCount >= 5){
+    devTapCount = 0;
+    clearTimeout(devTapTimer);
+    showDevDrawer();
+  }
+}
+function showDevDrawer(){
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  const current = getProviderChoice();
+  const optionsHtml = PROVIDER_OPTIONS.map(o =>
+    `<option value="${o.value}" ${o.value === current ? 'selected' : ''}>${o.label}</option>`
+  ).join('');
+  overlay.innerHTML = `
+    <div class="modal-card">
+      <p>Developer settings</p>
+      <label class="field-label">AI provider</label>
+      <select id="devProviderSelect">${optionsHtml}</select>
+      <div class="modal-row" style="margin-top:16px;">
+        <button class="modal-cancel" id="devClose">Close</button>
+      </div>
+    </div>`;
+  document.body.appendChild(overlay);
+  document.getElementById('devProviderSelect').addEventListener('change', (e) => {
+    setProviderChoice(e.target.value);
+  });
+  document.getElementById('devClose').addEventListener('click', () => overlay.remove());
 }
 
 /* ============ SCREENS ============ */
@@ -959,6 +1013,8 @@ function render(){
   });
   const backEl = document.getElementById('backBtn');
   if(backEl) backEl.addEventListener('click', goBack);
+  const headerEl = document.querySelector('.mark-left');
+  if(headerEl) headerEl.addEventListener('click', handleHeaderTap);
 }
 
 render();
