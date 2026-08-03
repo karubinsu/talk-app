@@ -496,7 +496,7 @@ let msgIdCounter = 0;
 const app = document.getElementById('app');
 
 /* ============ CLAUDE CALL (dynamic conversation + feedback translation only) ============ */
-async function callClaude(system, userText){
+/*async function callClaude(system, userText){
   const res = await fetch("https://api.anthropic.com/v1/messages", {
     method:"POST",
     headers:{"Content-Type":"application/json"},
@@ -510,6 +510,24 @@ async function callClaude(system, userText){
   const text = (data.content||[]).map(b=>b.text||"").join("").trim();
   if(!text) throw new Error("Empty response");
   return text;
+}*/
+
+/* ============ GEMINI API CALL ============ */
+async function callGemini(system, userText) {
+  const res = await fetch("/api/translate", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ system, userText })
+  });
+
+  if (!res.ok) {
+    const errObj = await res.json().catch(() => ({}));
+    throw new Error(errObj.error || "API error " + res.status);
+  }
+
+  const data = await res.json();
+  if (!data.text) throw new Error("Empty response");
+  return data.text;
 }
 
 function langName(){
@@ -519,7 +537,8 @@ function langName(){
 async function translateUIStrings(){
   const system = `You translate short UI strings for a casual, friendly conversation-translator app into ${langName()}. Write the way real bilingual native speakers actually talk day-to-day, natural code-switching with English is fine if that is genuinely how people commonly speak this language, but lean more on ${langName()} than English overall. Avoid stiff, textbook, or overly formal phrasing, it should read like a text from a friend. Never use em dashes, use commas, periods, or parentheses instead. Do not reference "tonight" or any single specific event, keep the wording generally applicable over time. Some values are arrays of short bullet phrases, translate every element and keep the same array structure. Return ONLY a valid JSON object with exactly the same keys as given. No markdown fences, no commentary, nothing else.`;
   const userText = JSON.stringify(STATIC_UI.en.base);
-  const raw = await callClaude(system, userText);
+ // Replace: const raw = await callClaude(system, userText);
+const raw = await callGemini(system, userText);
   const cleaned = raw.replace(/^```json\s*/,'').replace(/```$/,'').trim();
   try{ return JSON.parse(cleaned); }
   catch(e){ console.error("UI translation parse failed, falling back to English", e, raw); return STATIC_UI.en.base; }
@@ -557,7 +576,8 @@ async function translateMessage(text, direction){
     ? `Conversation so far:\n${historyLines}\n\nTranslate this new message from ${langName()}${dialectPart} into natural, casual English:\n\n${text}`
     : `Conversation so far:\n${historyLines}\n\nTranslate this new message from casual English into natural, casual ${langName()}${dialectPart}:\n\n${text}`;
 
-  return await callClaude(system, instruction);
+  // Replace: return await callClaude(system, instruction);
+  return await callGemini(system, instruction);
 }
 
 /* ============ RENDER HELPERS ============ */
