@@ -1173,7 +1173,7 @@ async function doTranslate(msgId, text, direction){
     const result = await translateMessage(text, direction);
     const m = state.messages.find(x=>x.id===msgId);
     if(m){ m.translated = result.translated; m.note = result.note || null; m.status = 'done'; }
-    if(m && m.note){ showTip(msgId); return; }
+    if(m && m.note){ toggleTip(msgId); return; }
   }catch(e){
     const m = state.messages.find(x=>x.id===msgId);
     if(m){ m.status = 'error'; }
