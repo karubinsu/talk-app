@@ -111,6 +111,17 @@
   .modal-row button{flex:1;padding:12px;border-radius:12px;font-family:var(--sans);font-size:14.5px;cursor:pointer;}
   .modal-cancel{border:1px solid var(--border);background:transparent;color:var(--text-muted);}
   .modal-confirm{border:none;background:linear-gradient(135deg, var(--accent), var(--accent-2));color:#1a1410;font-weight:600;}
+  .dev-modal .modal-card{max-width:360px;max-height:82vh;overflow-y:auto;}
+  .dev-section{margin-top:16px;}
+  .dev-section:first-of-type{margin-top:0;}
+  .dev-msg-list{display:flex;flex-direction:column;gap:6px;max-height:220px;overflow-y:auto;}
+  .dev-msg-row{display:flex;align-items:center;justify-content:space-between;gap:8px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:8px 10px;}
+  .dev-msg-info{display:flex;flex-direction:column;min-width:0;}
+  .dev-msg-sender{font-size:11px;color:var(--accent);font-weight:600;}
+  .dev-msg-text{font-size:12.5px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:180px;}
+  .dev-msg-actions{display:flex;gap:6px;flex-shrink:0;}
+  .dev-msg-actions button{background:transparent;border:1px solid var(--border);color:var(--text-muted);border-radius:8px;width:28px;height:28px;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;padding:0;}
+  .dev-msg-actions button:hover{border-color:var(--accent);color:var(--text);}
   .hidden{display:none !important;}
 </style>
 </head>
@@ -121,7 +132,14 @@
 /* ============ CONFIG ============ */
 const CLAUDE_MODEL = "claude-sonnet-4-6";
 const HOST_EMAIL = "karlvincev.kvv@gmail.com";
-const HOST_NAME = "Vince";
+const HOST_NAME_STORAGE_KEY = "talk_host_name_v1";
+let HOST_NAME = (function(){
+  try{ return localStorage.getItem(HOST_NAME_STORAGE_KEY) || "Vince"; }catch(e){ return "Vince"; }
+})();
+function setHostName(name){
+  HOST_NAME = (name && name.trim()) || "Vince";
+  try{ localStorage.setItem(HOST_NAME_STORAGE_KEY, HOST_NAME); }catch(e){}
+}
 const STORAGE_KEY = "talk_app_state_v4";
 const UI_CACHE_PREFIX = "talk_ui_cache_v5_";
 
@@ -1031,24 +1049,88 @@ function handleHeaderTap(){
 }
 function showDevDrawer(){
   const overlay = document.createElement('div');
-  overlay.className = 'modal-overlay';
+  overlay.className = 'modal-overlay dev-modal';
   const current = getProviderChoice();
   const optionsHtml = PROVIDER_OPTIONS.map(o =>
     `<option value="${o.value}" ${o.value === current ? 'selected' : ''}>${o.label}</option>`
   ).join('');
+
+  const guestLabel = state.name || 'Guest';
+  const msgListHtml = state.messages.slice().reverse().map(m => {
+    const preview = (m.original||'').slice(0,40) + ((m.original||'').length>40 ? '…' : '');
+    return `
+    <div class="dev-msg-row" data-id="${m.id}">
+      <div class="dev-msg-info">
+        <span class="dev-msg-sender">${m.sender === 'host' ? HOST_NAME : guestLabel}</span>
+        <span class="dev-msg-text">${preview}</span>
+      </div>
+      <div class="dev-msg-actions">
+        <button class="dev-msg-switch" data-id="${m.id}" title="Switch to the other person">⇄</button>
+        <button class="dev-msg-delete" data-id="${m.id}" title="Delete message">🗑</button>
+      </div>
+    </div>`;
+  }).join('') || '<p class="hint">No messages yet.</p>';
+
   overlay.innerHTML = `
     <div class="modal-card">
-      <p>Opciones de desarollador</p>
-      <label class="field-label">Agente de idioma</label>
-      <select id="devProviderSelect">${optionsHtml}</select>
+      <p>Developer options</p>
+
+      <div class="dev-section">
+        <label class="field-label" style="margin-top:0;">AI provider</label>
+        <select id="devProviderSelect">${optionsHtml}</select>
+      </div>
+
+      <div class="dev-section">
+        <label class="field-label">Host name</label>
+        <input type="text" id="devHostNameInput" value="${HOST_NAME}" placeholder="Host name">
+      </div>
+
+      <div class="dev-section">
+        <label class="field-label">Messages (latest first)</label>
+        <div class="dev-msg-list" id="devMsgList">${msgListHtml}</div>
+      </div>
+
       <div class="modal-row" style="margin-top:16px;">
         <button class="modal-cancel" id="devClose">Close</button>
       </div>
     </div>`;
   document.body.appendChild(overlay);
+
   document.getElementById('devProviderSelect').addEventListener('change', (e) => {
     setProviderChoice(e.target.value);
   });
+
+  document.getElementById('devHostNameInput').addEventListener('change', (e) => {
+    setHostName(e.target.value);
+    render(); // updates turn-toggle label, header, etc. behind the drawer
+  });
+
+  overlay.querySelectorAll('.dev-msg-delete').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = btn.dataset.id;
+      state.messages = state.messages.filter(m => m.id !== id);
+      overlay.remove();
+      render();
+    });
+  });
+
+  overlay.querySelectorAll('.dev-msg-switch').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = btn.dataset.id;
+      const m = state.messages.find(x => x.id === id);
+      if(!m) return;
+      m.sender = m.sender === 'host' ? 'guest' : 'host';
+      m.translated = null;
+      m.noteEn = null;
+      m.noteLocal = null;
+      m.status = 'pending';
+      overlay.remove();
+      render();
+      const direction = m.sender === 'guest' ? 'toEnglish' : 'fromEnglish';
+      doTranslate(id, m.original, direction); // regenerates translation + tip for the new sender
+    });
+  });
+
   document.getElementById('devClose').addEventListener('click', () => overlay.remove());
 }
 
