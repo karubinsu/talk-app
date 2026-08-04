@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>Common — Speak the Local Vibe</title>
+<title>Common — Connect Beyond Language</title>
 <style>
   :root{
     --bg:#14141f; --bg-soft:#1c1c2c; --card:#232338; --card-hi:#2b2b44;
@@ -990,7 +990,7 @@ function markSVG(){
 function markHeader(){
   const showBack = state.history.length > 0 && state.screen !== 'thanks';
   const backHtml = showBack ? `<span class="back-btn" id="backBtn">←</span>` : '';
-  const tagline = (state.ui && state.ui.appTagline) || 'Speak the Local Vibe';
+  const tagline = (state.ui && state.ui.appTagline) || 'Connect Beyond Language';
   return `<div class="mark">
     <div class="mark-left">${backHtml}${markSVG()}<span class="label">Common — ${tagline}</span></div>
     <span class="start-over" id="startOverLink">Start over</span>
@@ -1513,7 +1513,7 @@ function saveState(){
 }
 function render(){
   saveState();
-  document.title = 'Common — ' + ((state.ui && state.ui.appTagline) || 'Speak the Local Vibe');
+  document.title = 'Common — ' + ((state.ui && state.ui.appTagline) || 'Connect Beyond Language');
   switch(state.screen){
     case 'language': renderLanguageScreen(); break;
     case 'loadingConsent': renderLoading('Getting things ready...'); break;
