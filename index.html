@@ -232,15 +232,15 @@ function keyboardLangTag(){
    Satoori, Thai regional) - worth a native speaker spot check before Friday. */
 const STATIC_UI = {
 en: { base: {
-  appTagline: "Speak the Local Vibe",
+  appTagline: "Connect Beyond Language",
   consentTitle: "Hi!",
-  consentBody: "I'm building something to help people talk to each other naturally across language barriers. Want to help me test an early version? I'd love to hear what you think afterward.",
+  consentBody: "I'm building an app to help people connect and have natural conversations when they speak different languages. Want to help me test an early version? I'd love to hear what you think afterward.",
   yesBtn: "Yes, let's try it", noBtn: "No thanks",
   declineBody: "No worries at all, thanks for considering it! Have a great night.",
   namePrompt: "What's your name?", nameContinue: "Start the conversation",
   inputPlaceholderGuest: "Type in your language...", sendBtn: "Send", endBtn: "End conversation",
   dialectHint: "This helps the translation match how people actually speak where you're from. It's already set to standard, only change it if a specific dialect fits you better.",
-  keyboardHint: "Tip: tap the \ud83c\udf10 globe on your keyboard to switch",
+  keyboardHint: "Tip: tap the 🌐 globe on your keyboard to switch languages",
   keyboardSetupHint: "If this device's keyboard doesn't already type your language, it's worth asking your host to help set it up before you start.",
   devHint: "This app is still a work in progress and might not always behave perfectly. If you notice anything off, feel free to mention it in the feedback after this conversation.",
   feedbackTitle: "How was that?",
@@ -248,42 +248,44 @@ en: { base: {
   feedbackPlaceholder: "Share your thoughts...", feedbackSubmit: "Send feedback",
   translatingLabel: "Translating...", retryLabel: "Tap to retry",
   thanksTitle: "Thank you!",
-  thanksIntro: "Really appreciate you trying this and sharing your thoughts. Hoping this can make it easier to connect at events like this, especially when English feels like a barrier. This is just an early test. Here's some of what I'm hoping to add:",
+  thanksIntro: "Really appreciate you trying this and sharing your thoughts. Hoping this can make it easier to connect with people who speak different languages, especially when you don't share a language you can comfortably communicate in. This is just an early test. Here's some of what I'm hoping to add:",
   thanksFeatures: [
-    "Remembering the people you've talked to, so if we cross paths again at an event like this, it can give you a quick summary of who they are and what you talked about before",
     "Different tone options, like switching between casual with friends or more formal when you've just met someone, so conversations don't all sound the same",
-    "Talking through your own phone instead of passing one back and forth, including the option to just speak instead of type"
+    "Voice input for in-person conversations, so when you're using the app together on one phone, you can speak instead of type",
+    "Conversation history that lets you look back at past chats and generate a quick summary of who someone is and what you talked about, making it easier to reconnect when you meet again",
+    "A messenger-style way to keep talking with people you connect with, with each person using their own phone, so you can continue conversations across languages even after you've gone your separate ways"
   ],
-  thanksClosing: "If you ever want to reach out about this, or anything else, I'd genuinely love to hear from you. And if more thoughts come to mind later, I'm always happy to hear them.",
+  thanksClosing: "If you ever want to reach out about the app or anything else, I'd genuinely love to hear from you. And if you think of anything else you'd like to share later, feel free to reach out anytime.",
   preparingNote: "Wrapping up your feedback...",
   finishBtn: "Finish", sentLabel: "Done!", sendingLabel: "Sending...", redirectingLabel: "Returning to start in {n}..."
 }, dialects: {} },
 
 tl: { base: {
-  appTagline: "Makipag-usap sa Vibe ng Lokal",
+  appTagline: "Makipag-usap kahit magkaiba ang wika",
   consentTitle: "Hi!",
-  consentBody: "Gumagawa ako ng app na makakatulong sa mga tao na mag-usap nang natural kahit magkaiba ang wika nila. Gusto mo bang tumulong subukan itong unang bersyon? Gustong-gusto kong marinig ang thoughts mo pagkatapos.",
+  consentBody: "Gumagawa ako ng app na tumutulong sa mga tao na magkakonekta at natural na mag-usap kahit magkaiba ang wika nila. Gusto mo bang tumulong sa pagsubok ng unang bersyon? Gusto kong marinig ang mga saloobin mo pagkatapos.",
   yesBtn: "Sige, subukan natin", noBtn: "Salamat na lang",
-  declineBody: "Ayos lang talaga, salamat sa pagconsider! Enjoy sa gabi.",
-  namePrompt: "Ano pangalan mo?", nameContinue: "Simulan ang usapan",
-  inputPlaceholderGuest: "I-type dito sa wika mo...", sendBtn: "Ipadala", endBtn: "Tapusin ang usapan",
-  dialectHint: "Makakatulong ito para tumugma ang translation sa paraan ng pagsasalita sa lugar mo. Naka-set na ito sa standard, palitan mo lang kung mas bagay ang ibang dialect sa'yo.",
-  keyboardHint: "Tip: pindutin ang \ud83c\udf10 sa keyboard mo para lumipat",
-  keyboardSetupHint: "Kung hindi pa naka-set up itong keyboard ng device para sa wika mo, pwede mo hingin tulong sa host para i-set up bago ka magsimula.",
-  devHint: "Nasa development pa itong app kaya baka may mga pagkakataon na hindi ito gumana nang maayos. Kung may napansin kang kakaiba, i-share mo na lang sa feedback pagkatapos ng usapan.",
-  feedbackTitle: "Kumusta yun?",
-  feedbackBody: "Natural ba yung translation? Sa tingin mo ba magiging useful talaga ito? Lahat ng thoughts okay lang, good or bad.",
-  feedbackPlaceholder: "I-share yung thoughts mo...", feedbackSubmit: "Ipadala ang feedback",
+  declineBody: "Ayos lang talaga, salamat sa pag-consider! Enjoy sa gabi.",
+  namePrompt: "Ano ang pangalan mo?", nameContinue: "Simulan ang usapan",
+  inputPlaceholderGuest: "I-type dito gamit ang wika mo...", sendBtn: "Ipadala", endBtn: "Tapusin ang usapan",
+  dialectHint: "Makakatulong ito para tumugma ang translation sa paraan ng pagsasalita sa lugar mo. Naka-set na ito sa standard, palitan mo lang kung mas bagay sa iyo ang ibang dialect.",
+  keyboardHint: "Tip: i-tap ang 🌐 globe sa keyboard mo para magpalit ng wika",
+  keyboardSetupHint: "Kung hindi pa naka-set up ang keyboard ng device para sa wika mo, puwede kang humingi ng tulong sa host na i-set up ito bago ka magsimula.",
+  devHint: "Nasa development pa ang app na ito, kaya baka may mga pagkakataong hindi ito gumana nang maayos. Kung may napansin kang kakaiba, puwede mo itong banggitin sa feedback pagkatapos ng usapan.",
+  feedbackTitle: "Kumusta iyon?",
+  feedbackBody: "Natural ba ang translation? Sa tingin mo ba magiging useful talaga ito? Kahit anong feedback, mabuti man o masama, ay welcome.",
+  feedbackPlaceholder: "I-share ang thoughts mo...", feedbackSubmit: "Ipadala ang feedback",
   translatingLabel: "Nagta-translate...", retryLabel: "Pindutin para subukan ulit",
   thanksTitle: "Salamat!",
-  thanksIntro: "Talagang appreciate ko na sinubukan mo ito at binahagi ang thoughts mo. Sana makatulong ito para mas madali makisalamuha sa mga event na katulad nito, lalo na kapag mahirap dahil sa English. Unang test pa lang ito, ito yung ilan sa mga plano ko idagdag sa susunod:",
+  thanksIntro: "Talagang naa-appreciate ko na sinubukan mo ito at ibinahagi ang thoughts mo. Sana makatulong ito para mas madali kang makakonekta sa mga taong ibang wika ang gamit, lalo na kapag wala kayong wikang pareho ninyong komportableng gamitin sa isa't isa. Unang test pa lang ito, at ito ang ilan sa mga plano kong idagdag:",
   thanksFeatures: [
-    "Maaalala nito yung mga taong nakausap mo na, kaya kung magkita tayong muli sa katulad na event, may makukuha kang quick summary kung sino sila at ano yung napag-usapan niyo dati",
-    "Iba't ibang tone options, tulad ng pagpapalit sa casual kapag kaibigan o mas formal kapag bagong kilala pa lang, para hindi parepareho ang dating ng usapan",
-    "Magagamit sa sarili mong phone imbes na palitan lang, pati na rin ang option na magsalita na lang imbes na mag-type"
+    "Iba't ibang tone options, tulad ng casual kapag kaibigan o mas formal kapag bagong kakilala pa lang, para hindi pare-pareho ang dating ng mga usapan",
+    "Voice input para sa mga personal na usapan, para kapag ginagamit ninyo ang app sa iisang phone, puwede kang magsalita imbes na mag-type",
+    "Conversation history na magbibigay-daan para balikan ang mga dati ninyong chat at gumawa ng quick summary kung sino ang kausap mo at ano ang napag-usapan ninyo, para mas madali kayong makapag-reconnect kapag nagkita ulit",
+    "Isang messenger-style na paraan para ipagpatuloy ang pakikipag-usap sa mga taong nakilala mo, gamit ang sarili ninyong mga phone, para makapagpatuloy kayo ng usapan sa magkaibang wika kahit magkahiwalay na kayo"
   ],
-  thanksClosing: "Kung gusto mo akong i-reach out tungkol dito o kahit ano pa, gustong-gusto ko talaga marinig yun. At kung may maisip ka pa later, laging bukas ako makinig.",
-  preparingNote: "Ini-wrap up pa yung feedback mo...",
+  thanksClosing: "Kung gusto mong makipag-ugnayan tungkol sa app o kahit ano pa, gusto ko talagang marinig mula sa iyo. At kung may maisip ka pang gusto mong ibahagi sa ibang pagkakataon, huwag kang mag-atubiling mag-message.",
+  preparingNote: "Tinatapos lang ang feedback mo...",
   finishBtn: "Tapos na", sentLabel: "Salamat!", sendingLabel: "Ipinapadala...", redirectingLabel: "Babalik sa simula sa loob ng {n}..."
 }, dialects: {
   "Cebuano": {
@@ -313,29 +315,30 @@ tl: { base: {
 }},
 
 ja: { base: {
-  appTagline: "その土地のノリで話そう",
+  appTagline: "言葉が違っても話せる",
   consentTitle: "こんにちは!",
-  consentBody: "言葉の壁を越えて自然に話せるようにするアプリを作っています。初期版を一緒に試してもらえますか?後で感想を聞かせてもらえたら嬉しいです。",
+  consentBody: "異なる言語を話す人同士が、自然に会話してつながれるようにするアプリを作っています。初期版を一緒に試してもらえませんか？あとで感想を聞かせてもらえたら嬉しいです。",
   yesBtn: "試してみる", noBtn: "今回はやめておく",
-  declineBody: "全然大丈夫です、考えてくれてありがとう!良い夜を。",
+  declineBody: "全然大丈夫です。考えてくれてありがとう！良い夜を。",
   namePrompt: "お名前は?", nameContinue: "会話を始める",
-  inputPlaceholderGuest: "自分の言葉で入力してください...", sendBtn: "送信", endBtn: "会話を終える",
-  dialectHint: "これは、あなたの出身地の話し方に翻訳を合わせるのに役立ちます。すでに標準に設定されていますが、他の方言の方が合う場合は変更してください。",
-  keyboardHint: "ヒント: キーボードの\ud83c\udf10をタップして切り替え",
-  keyboardSetupHint: "この端末のキーボードでまだ日本語が入力できない場合は、始める前にホストに設定を手伝ってもらうと安心です。",
+  inputPlaceholderGuest: "自分の言語で入力してください...", sendBtn: "送信", endBtn: "会話を終える",
+  dialectHint: "これは、あなたの地域で実際に使われている話し方に翻訳を合わせるのに役立ちます。すでに標準に設定されていますが、別の方言のほうが合う場合は変更してください。",
+  keyboardHint: "ヒント：キーボードの🌐をタップして言語を切り替えてください",
+  keyboardSetupHint: "この端末のキーボードでまだ自分の言語を入力できない場合は、始める前にホストに設定を手伝ってもらうと安心です。",
   devHint: "このアプリはまだ開発中なので、うまく動かないこともあるかもしれません。何か気になる点があれば、会話の後のフィードバックで教えてください。",
   feedbackTitle: "どうでしたか?",
   feedbackBody: "翻訳は自然に感じましたか?こういうのって実際に役立つと思いますか?良い意見も悪い意見も歓迎です。",
   feedbackPlaceholder: "感想をどうぞ...", feedbackSubmit: "フィードバックを送る",
   translatingLabel: "翻訳中...", retryLabel: "タップして再試行",
   thanksTitle: "ありがとう!",
-  thanksIntro: "試してくれて、感想も聞かせてくれて本当にありがとう。こういうイベントで、英語が壁に感じるときでも繋がりやすくなればと思っています。これはまだ初期のテストです。今後追加を考えているのはこんな感じです。",
+  thanksIntro: "試してくれて、感想も聞かせてくれて本当にありがとう。異なる言語を話す人同士でも、もっとつながりやすくなればと思っています。特に、お互いに無理なく使える共通の言語がないときに役立てば嬉しいです。これはまだ初期テストです。今後追加したいと思っているのは、こんな機能です。",
   thanksFeatures: [
-    "話した相手を覚えておく機能。こういうイベントでまた会ったときに、相手が誰で前に何を話したか簡単に振り返れるようにする",
-    "トーンを選べる機能。友達とは気軽に、初対面の人にはもう少し丁寧にと、話す相手によって変えられるようにする",
-    "スマホを渡し合わなくても、それぞれの端末で話せるようにする機能。タイプの代わりに話すだけでもいいようにする"
+    "トーンを選べる機能。友達とは気軽に、初対面の人にはもう少し丁寧にと、相手によって話し方を変えられるようにする",
+    "対面での会話向けの音声入力機能。同じスマホを一緒に使うとき、文字を入力する代わりに話して伝えられるようにする",
+    "会話履歴を見返せる機能。過去のチャットを確認したり、相手がどんな人か、以前何を話したかを簡単にまとめたりできるので、また会ったときに話を続けやすくする",
+    "メッセンジャーのように、つながった人とそれぞれのスマホから会話を続けられる機能。別々の場所にいても、異なる言語のままやり取りを続けられるようにする"
   ],
-  thanksClosing: "これについて、他のことでも連絡してくれたら嬉しいです。後でまた何か思いついたら、いつでも聞かせてください。",
+  thanksClosing: "このアプリについてでも、他のことについてでも、いつでも連絡してもらえたら嬉しいです。あとで何か共有したいことを思いついたら、いつでも気軽に連絡してください。",
   preparingNote: "フィードバックをまとめています...",
   finishBtn: "完了", sentLabel: "ありがとう!", sendingLabel: "送信中...", redirectingLabel: "{n}秒後に最初の画面に戻ります..."
 }, dialects: {
@@ -349,29 +352,30 @@ ja: { base: {
 }},
 
 ko: { base: {
-  appTagline: "그 동네 느낌으로 말해요",
+  appTagline: "언어가 달라도 대화할 수 있어요",
   consentTitle: "안녕하세요!",
-  consentBody: "언어 장벽 없이 자연스럽게 대화할 수 있도록 도와주는 앱을 만들고 있어요. 초기 버전을 같이 테스트해볼래요? 나중에 어떻게 생각하는지 들려주면 좋겠어요.",
+  consentBody: "서로 다른 언어를 쓰는 사람들이 자연스럽게 대화하고 연결될 수 있도록 돕는 앱을 만들고 있어요. 초기 버전을 같이 테스트해볼래요? 나중에 어떻게 생각하는지 들려주면 좋겠어요.",
   yesBtn: "네, 해볼게요", noBtn: "괜찮아요",
-  declineBody: "전혀 상관없어요, 고려해줘서 고마워요! 좋은 밤 되세요.",
+  declineBody: "괜찮아요, 생각해줘서 고마워요! 좋은 밤 보내세요.",
   namePrompt: "이름이 뭐예요?", nameContinue: "대화 시작하기",
   inputPlaceholderGuest: "본인 언어로 입력하세요...", sendBtn: "보내기", endBtn: "대화 종료",
-  dialectHint: "이건 번역이 당신이 사는 지역에서 실제로 말하는 방식과 맞도록 도와줘요. 이미 표준으로 설정되어 있고, 다른 사투리가 더 잘 맞으면 바꾸면 돼요.",
-  keyboardHint: "팁: 키보드의 \ud83c\udf10를 눌러서 전환하세요",
-  keyboardSetupHint: "이 기기 키보드에 아직 한국어가 없다면, 시작하기 전에 호스트에게 설정을 도와달라고 하는 게 좋아요.",
+  dialectHint: "이 설정은 번역이 당신이 사는 지역에서 사람들이 실제로 말하는 방식에 맞도록 도와줘요. 이미 표준으로 설정되어 있으니, 다른 지역의 말투가 더 잘 맞을 때만 바꾸면 돼요.",
+  keyboardHint: "팁: 키보드의 🌐를 눌러 언어를 전환하세요",
+  keyboardSetupHint: "이 기기의 키보드로 아직 내 언어를 입력할 수 없다면, 시작하기 전에 호스트에게 설정을 도와달라고 하는 게 좋아요.",
   devHint: "이 앱은 아직 개발 중이라 가끔 제대로 작동하지 않을 수도 있어요. 이상한 점이 있으면 대화가 끝난 후 피드백에서 알려주세요.",
   feedbackTitle: "어땠어요?",
   feedbackBody: "번역이 자연스러웠나요? 이런 게 실제로 유용할 것 같아요? 좋은 의견이든 안 좋은 의견이든 다 환영이에요.",
   feedbackPlaceholder: "생각을 남겨주세요...", feedbackSubmit: "피드백 보내기",
   translatingLabel: "번역 중...", retryLabel: "탭해서 다시 시도",
   thanksTitle: "고마워요!",
-  thanksIntro: "시도해주고 생각도 나눠줘서 정말 고마워요. 이런 행사에서 영어가 장벽처럼 느껴질 때도 더 쉽게 어울릴 수 있으면 좋겠어요. 이건 아직 초기 테스트예요. 앞으로 추가하고 싶은 건 이런 것들이에요.",
+  thanksIntro: "직접 써보고 생각도 나눠줘서 정말 고마워요. 서로 다른 언어를 쓰는 사람들도 더 쉽게 연결될 수 있으면 좋겠어요. 특히 두 사람이 편하게 사용할 수 있는 공통 언어가 없을 때 도움이 되었으면 해요. 이건 아직 초기 테스트예요. 앞으로 추가하고 싶은 기능은 이런 것들이에요.",
   thanksFeatures: [
-    "이야기했던 사람을 기억하는 기능. 이런 행사에서 다시 만나면 그 사람이 누구고 전에 무슨 얘기했는지 간단히 떠올릴 수 있게",
     "말투를 고를 수 있는 기능. 친구랑은 편하게, 처음 만난 사람이랑은 좀 더 정중하게, 상대에 따라 다르게 말할 수 있도록",
-    "폰을 서로 주고받지 않고 각자 폰으로 대화할 수 있는 기능. 타이핑 대신 말로도 할 수 있게"
+    "직접 만나서 대화할 때 사용할 수 있는 음성 입력 기능. 한 대의 휴대폰을 함께 사용할 때 타이핑 대신 말로 입력할 수 있게",
+    "대화 기록을 확인할 수 있는 기능. 이전 채팅을 다시 보고, 상대가 어떤 사람인지 또는 전에 무슨 이야기를 나눴는지 간단한 요약을 만들어 다시 만났을 때 대화를 이어가기 쉽게",
+    "메신저처럼 각자 자신의 휴대폰으로 연결된 사람과 계속 대화할 수 있는 기능. 서로 다른 장소에 있어도 다른 언어로 대화를 이어갈 수 있게"
   ],
-  thanksClosing: "이것에 대해서든 다른 일이든 연락하고 싶으면 언제든 환영이에요. 나중에 또 생각나는 게 있으면 언제든 들려주세요.",
+  thanksClosing: "앱에 관한 이야기든 다른 이야기든, 언제든 연락해주면 정말 좋겠어요. 나중에 또 공유하고 싶은 생각이 떠오르면 언제든 편하게 알려주세요.",
   preparingNote: "피드백을 정리하고 있어요...",
   finishBtn: "완료", sentLabel: "감사해요!", sendingLabel: "전송 중...", redirectingLabel: "{n}초 후 처음 화면으로 돌아갑니다..."
 }, dialects: {
@@ -384,29 +388,30 @@ ko: { base: {
 }},
 
 vi: { base: {
-  appTagline: "Nói Đúng Chất Địa Phương",
+  appTagline: "Nói chuyện dù khác ngôn ngữ",
   consentTitle: "Chào bạn!",
-  consentBody: "Mình đang làm một ứng dụng giúp mọi người trò chuyện tự nhiên hơn dù khác ngôn ngữ. Bạn có muốn thử bản đầu tiên với mình không? Sau đó mình rất muốn nghe suy nghĩ của bạn.",
+  consentBody: "Mình đang làm một ứng dụng giúp mọi người kết nối và trò chuyện tự nhiên khi nói các ngôn ngữ khác nhau. Bạn có muốn thử bản đầu tiên với mình không? Sau đó mình rất muốn nghe suy nghĩ của bạn.",
   yesBtn: "Được, thử xem sao", noBtn: "Thôi khỏi",
   declineBody: "Không sao cả, cảm ơn bạn đã cân nhắc nhé! Chúc bạn buổi tối vui vẻ.",
   namePrompt: "Bạn tên gì?", nameContinue: "Bắt đầu trò chuyện",
   inputPlaceholderGuest: "Gõ bằng ngôn ngữ của bạn...", sendBtn: "Gửi", endBtn: "Kết thúc trò chuyện",
-  dialectHint: "Điều này giúp bản dịch khớp với cách mọi người thực sự nói ở nơi bạn sống. Đã được đặt sẵn là giọng chuẩn, chỉ cần đổi nếu một giọng vùng miền khác hợp với bạn hơn.",
-  keyboardHint: "Mẹo: chạm vào biểu tượng \ud83c\udf10 trên bàn phím để chuyển",
-  keyboardSetupHint: "Nếu bàn phím trên máy này chưa gõ được tiếng Việt, bạn nên nhờ chủ nhà giúp cài đặt trước khi bắt đầu.",
+  dialectHint: "Điều này giúp bản dịch phù hợp với cách mọi người thực sự nói ở nơi bạn sống. Đã được đặt sẵn ở mức chuẩn, bạn chỉ cần đổi nếu một giọng địa phương khác phù hợp với bạn hơn.",
+  keyboardHint: "Mẹo: chạm vào biểu tượng 🌐 trên bàn phím để chuyển ngôn ngữ",
+  keyboardSetupHint: "Nếu bàn phím trên thiết bị này chưa gõ được ngôn ngữ của bạn, bạn nên nhờ chủ nhà giúp cài đặt trước khi bắt đầu.",
   devHint: "Ứng dụng này vẫn đang trong quá trình phát triển nên đôi khi có thể chưa hoạt động như mong đợi. Nếu thấy gì đó chưa ổn, bạn cứ chia sẻ trong phần phản hồi sau khi trò chuyện xong nhé.",
-  feedbackTitle: "Thấy sao rồi?",
-  feedbackBody: "Bản dịch có tự nhiên không? Bạn nghĩ cái này có thực sự hữu ích không? Ý kiến gì cũng được, khen hay chê đều okay.",
+  feedbackTitle: "Thấy thế nào rồi?",
+  feedbackBody: "Bản dịch có tự nhiên không? Bạn nghĩ thứ này có thực sự hữu ích không? Ý kiến gì cũng được, khen hay chê đều hoan nghênh.",
   feedbackPlaceholder: "Chia sẻ suy nghĩ của bạn...", feedbackSubmit: "Gửi phản hồi",
   translatingLabel: "Đang dịch...", retryLabel: "Chạm để thử lại",
   thanksTitle: "Cảm ơn bạn!",
-  thanksIntro: "Thật sự cảm ơn bạn đã thử và chia sẻ suy nghĩ. Mong là điều này giúp mọi người kết nối dễ hơn ở những sự kiện như thế này, nhất là khi tiếng Anh là một rào cản. Đây mới chỉ là bản thử nghiệm đầu tiên. Đây là một số thứ mình đang muốn thêm vào sau này.",
+  thanksIntro: "Thật sự cảm ơn bạn đã thử và chia sẻ suy nghĩ. Mong là ứng dụng này sẽ giúp mọi người dễ kết nối hơn khi nói các ngôn ngữ khác nhau, đặc biệt là khi hai người không có một ngôn ngữ chung mà cả hai đều cảm thấy thoải mái khi sử dụng. Đây mới chỉ là bản thử nghiệm đầu tiên. Đây là một số tính năng mình muốn thêm vào sau này.",
   thanksFeatures: [
-    "Nhớ những người mình đã trò chuyện, để nếu gặp lại nhau ở một sự kiện tương tự, bạn có thể xem nhanh họ là ai và trước đó đã nói chuyện gì",
-    "Nhiều lựa chọn giọng điệu, như chuyển giữa thân mật khi nói với bạn bè hoặc trang trọng hơn khi mới gặp ai đó, để cuộc trò chuyện không nghe giống nhau hết",
-    "Trò chuyện trên điện thoại riêng của mỗi người thay vì phải đưa qua đưa lại, kể cả lựa chọn nói thay vì gõ chữ"
+    "Nhiều lựa chọn giọng điệu, như chuyển giữa thân mật khi nói với bạn bè hoặc trang trọng hơn khi mới gặp ai đó, để các cuộc trò chuyện không nghe giống nhau hết",
+    "Nhập bằng giọng nói cho những cuộc trò chuyện trực tiếp, để khi cùng dùng một điện thoại, bạn có thể nói thay vì phải gõ",
+    "Lịch sử trò chuyện để bạn xem lại các cuộc trò chuyện trước và tạo một bản tóm tắt nhanh về người đó hoặc những gì hai người đã nói, giúp bạn dễ kết nối lại khi gặp nhau lần nữa",
+    "Một cách trò chuyện kiểu ứng dụng nhắn tin để tiếp tục nói chuyện với những người bạn đã kết nối, mỗi người dùng điện thoại của mình, để hai người có thể tiếp tục trò chuyện bằng các ngôn ngữ khác nhau ngay cả khi đã rời khỏi sự kiện"
   ],
-  thanksClosing: "Nếu bạn muốn liên hệ với mình về chuyện này, hay bất cứ chuyện gì khác, mình rất muốn nghe. Sau này nếu nghĩ ra thêm gì, mình luôn sẵn sàng lắng nghe.",
+  thanksClosing: "Nếu bạn muốn liên hệ với mình về ứng dụng hoặc bất cứ chuyện gì khác, mình thật sự rất muốn nghe từ bạn. Nếu sau này bạn nghĩ ra điều gì muốn chia sẻ, cứ thoải mái liên hệ bất cứ lúc nào.",
   preparingNote: "Đang hoàn thiện phản hồi của bạn...",
   finishBtn: "Hoàn tất", sentLabel: "Cảm ơn bạn!", sendingLabel: "Đang gửi...", redirectingLabel: "Quay lại màn hình đầu sau {n} giây..."
 }, dialects: {
@@ -423,15 +428,15 @@ vi: { base: {
 }},
 
 zh: { base: {
-  appTagline: "用当地范儿聊天",
+  appTagline: "跨越语言，连接彼此",
   consentTitle: "你好!",
-  consentBody: "我在做一个能帮助大家跨越语言障碍自然聊天的应用。想不想帮我试试早期版本?之后我很想听听你的想法。",
+  consentBody: "我在做一个帮助不同语言的人自然交流、建立联系的应用。想不想帮我试试早期版本？之后我很想听听你的想法。",
   yesBtn: "好啊,试试看", noBtn: "不用了,谢谢",
   declineBody: "完全没关系,谢谢你考虑一下!祝你今晚愉快。",
   namePrompt: "你叫什么名字?", nameContinue: "开始对话",
   inputPlaceholderGuest: "用你的语言输入...", sendBtn: "发送", endBtn: "结束对话",
   dialectHint: "这可以帮助翻译更符合你所在地方人们实际说话的方式。已经默认设成标准,只有在某个方言更适合你时才需要更改。",
-  keyboardHint: "提示:点击键盘上的\ud83c\udf10即可切换",
+  keyboardHint: "提示：点击键盘上的🌐即可切换语言",
   keyboardSetupHint: "如果这台设备的键盘还没有设置成可以打中文,建议开始前请主人帮忙设置一下。",
   devHint: "这个应用还在开发中,可能偶尔会不太顺畅。如果发现什么问题,欢迎在对话结束后的反馈里告诉我。",
   feedbackTitle: "感觉怎么样?",
@@ -439,13 +444,14 @@ zh: { base: {
   feedbackPlaceholder: "分享你的想法...", feedbackSubmit: "发送反馈",
   translatingLabel: "翻译中...", retryLabel: "点击重试",
   thanksTitle: "谢谢你!",
-  thanksIntro: "真的很感谢你愿意尝试并分享想法。希望这能让大家在这类活动上更容易交流,尤其是英语让人觉得有障碍的时候。这还只是早期测试,以下是我之后想加上的一些功能。",
+  thanksIntro: "真的很感谢你愿意尝试并分享想法。希望这个应用能让说不同语言的人更容易建立联系，尤其是在两个人没有一种都能舒服使用的共同语言时。这还只是早期测试，以下是我之后想加上的一些功能。",
   thanksFeatures: [
-    "记住聊过的人,这样如果在类似的活动上再次遇到,可以快速回想起对方是谁、之前聊过什么",
-    "可以选择语气,比如和朋友聊天时随意一点,刚认识的人就正式一点,这样对话不会每次听起来都一样",
-    "不用来回传手机,各自用自己的手机聊天,也可以选择直接说话而不是打字"
+    "可以选择不同的语气，比如和朋友聊天时随意一点，刚认识的人就正式一点，让不同的对话听起来不会都一样",
+    "面对面聊天时可以使用语音输入，这样两个人一起用一部手机时，可以直接说话，不必打字",
+    "聊天记录功能，可以回看之前的聊天，并生成关于对方是谁、你们之前聊过什么的简短总结，让你们下次再见面时更容易重新聊起来",
+    "像聊天软件一样，可以用各自的手机继续和认识的人聊天。即使之后各自离开了，也可以继续用不同的语言交流"
   ],
-  thanksClosing: "如果你想就这件事,或者任何别的事联系我,我都很乐意听到你的消息。以后想到什么也随时欢迎告诉我。",
+  thanksClosing: "如果你想聊聊这个应用，或者任何其他事情，我都很愿意听听你的想法。以后如果又想到什么想分享的，也随时欢迎联系我。",
   preparingNote: "正在整理你的反馈...",
   finishBtn: "完成", sentLabel: "谢谢!", sendingLabel: "发送中...", redirectingLabel: "{n}秒后返回首页..."
 }, dialects: {
@@ -474,15 +480,15 @@ zh: { base: {
 }},
 
 th: { base: {
-  appTagline: "พูดแบบคนท้องถิ่น",
+  appTagline: "เชื่อมต่อกันโดยไม่มีกำแพงภาษา",
   consentTitle: "สวัสดี!",
-  consentBody: "กำลังทำแอปที่ช่วยให้คนคุยกันได้อย่างเป็นธรรมชาติแม้พูดคนละภาษา อยากลองเวอร์ชันแรกด้วยกันไหม หลังจากนั้นอยากฟังความคิดเห็นมากๆ เลย",
+  consentBody: "กำลังทำแอปที่ช่วยให้คนที่พูดคนละภาษาสามารถเชื่อมต่อและคุยกันได้อย่างเป็นธรรมชาติ อยากลองเวอร์ชันแรกด้วยกันไหม หลังจากนั้นอยากฟังความคิดเห็นมากๆ เลย",
   yesBtn: "โอเค ลองดู", noBtn: "ขอบคุณ ไม่เป็นไร",
   declineBody: "ไม่เป็นไรเลย ขอบคุณที่พิจารณานะ ขอให้มีค่ำคืนที่ดี",
   namePrompt: "ชื่ออะไร?", nameContinue: "เริ่มบทสนทนา",
   inputPlaceholderGuest: "พิมพ์เป็นภาษาของคุณ...", sendBtn: "ส่ง", endBtn: "จบบทสนทนา",
   dialectHint: "สิ่งนี้ช่วยให้คำแปลตรงกับวิธีที่คนในพื้นที่ของคุณพูดจริงๆ ตอนนี้ตั้งเป็นมาตรฐานไว้แล้ว เปลี่ยนได้ถ้าสำเนียงอื่นเหมาะกับคุณมากกว่า",
-  keyboardHint: "เคล็ดลับ: แตะ \ud83c\udf10 บนคีย์บอร์ดเพื่อสลับภาษา",
+  keyboardHint: "เคล็ดลับ: แตะ 🌐 บนคีย์บอร์ดเพื่อสลับภาษา",
   keyboardSetupHint: "ถ้าคีย์บอร์ดเครื่องนี้ยังพิมพ์ภาษาไทยไม่ได้ ลองขอให้เจ้าของงานช่วยตั้งค่าให้ก่อนเริ่มนะ",
   devHint: "แอปนี้ยังอยู่ระหว่างพัฒนา อาจมีบางจุดที่ทำงานไม่สมบูรณ์แบบ ถ้าเจออะไรแปลกๆ บอกได้เลยในช่องความคิดเห็นหลังจบบทสนทนา",
   feedbackTitle: "เป็นยังไงบ้าง?",
@@ -490,13 +496,14 @@ th: { base: {
   feedbackPlaceholder: "แชร์ความคิดเห็น...", feedbackSubmit: "ส่งความคิดเห็น",
   translatingLabel: "กำลังแปล...", retryLabel: "แตะเพื่อลองใหม่",
   thanksTitle: "ขอบคุณมาก!",
-  thanksIntro: "ขอบคุณจริงๆ ที่ลองใช้และแชร์ความคิดเห็น หวังว่าสิ่งนี้จะช่วยให้เชื่อมต่อกับคนอื่นในงานแบบนี้ได้ง่ายขึ้น โดยเฉพาะตอนที่ภาษาอังกฤษรู้สึกเป็นอุปสรรค นี่ยังเป็นแค่การทดสอบช่วงแรก นี่คือบางอย่างที่อยากเพิ่มในอนาคต",
+  thanksIntro: "ขอบคุณจริงๆ ที่ลองใช้และแชร์ความคิดเห็น หวังว่าแอปนี้จะช่วยให้คนที่พูดคนละภาษาสามารถเชื่อมต่อกันได้ง่ายขึ้น โดยเฉพาะเวลาที่ทั้งสองคนไม่มีภาษากลางที่ใช้สื่อสารกันได้อย่างสบายใจ นี่ยังเป็นแค่การทดสอบช่วงแรก นี่คือบางฟีเจอร์ที่อยากเพิ่มในอนาคต",
   thanksFeatures: [
-    "จำคนที่เคยคุยด้วย ถ้าเจอกันอีกในงานแบบนี้ ก็จะสรุปให้เร็วๆ ว่าเขาเป็นใครและเคยคุยอะไรกันไว้",
-    "เลือกโทนการพูดได้ เช่น พูดแบบสบายๆ กับเพื่อน หรือสุภาพขึ้นกับคนที่เพิ่งรู้จัก เพื่อให้บทสนทนาไม่ฟังดูเหมือนกันหมด",
-    "คุยผ่านมือถือของแต่ละคนแทนที่จะต้องส่งเครื่องเดียวไปมา รวมถึงตัวเลือกให้พูดแทนการพิมพ์ได้ด้วย"
+    "เลือกโทนการพูดได้ เช่น พูดแบบสบายๆ กับเพื่อน หรือสุภาพขึ้นกับคนที่เพิ่งรู้จัก เพื่อให้แต่ละบทสนทนาไม่ฟังดูเหมือนกันหมด",
+    "ป้อนข้อความด้วยเสียงสำหรับการคุยกันต่อหน้า เพื่อให้เวลาที่ใช้แอปร่วมกันบนมือถือเครื่องเดียว คุณสามารถพูดแทนการพิมพ์ได้",
+    "ประวัติการสนทนาที่ให้คุณย้อนดูแชตก่อนหน้า และสร้างสรุปสั้นๆ ว่าคนคนนั้นเป็นใครหรือก่อนหน้านี้คุยอะไรกัน เพื่อให้กลับมาคุยต่อได้ง่ายขึ้นเมื่อเจอกันอีก",
+    "ฟีเจอร์แบบแอปแชตสำหรับคุยต่อกับคนที่คุณเชื่อมต่อด้วย โดยแต่ละคนใช้โทรศัพท์ของตัวเอง แม้แยกย้ายกันไปแล้วก็ยังคุยกันต่อได้โดยใช้คนละภาษา"
   ],
-  thanksClosing: "ถ้าอยากติดต่อเรื่องนี้หรือเรื่องอื่นก็ยินดีมากๆ ถ้ามีความคิดอะไรเพิ่มเติมทีหลังก็ยินดีรับฟังเสมอ",
+  thanksClosing: "ถ้าอยากติดต่อเรื่องแอปนี้หรือเรื่องอื่นๆ ก็ยินดีมากๆ ที่จะได้คุยกัน ถ้าทีหลังมีอะไรที่อยากแชร์เพิ่มเติม ก็ทักมาได้เสมอ",
   preparingNote: "กำลังสรุปความคิดเห็นของคุณ...",
   finishBtn: "เสร็จสิ้น", sentLabel: "ขอบคุณ!", sendingLabel: "กำลังส่ง...", redirectingLabel: "กลับไปหน้าแรกใน {n} วินาที..."
 }, dialects: {
@@ -510,15 +517,15 @@ th: { base: {
 }},
 
 es: { base: {
-  appTagline: "Habla con el Toque Local",
+  appTagline: "Habla aunque hablen distintos idiomas",
   consentTitle: "¡Hola!",
-  consentBody: "Estoy creando algo para ayudar a la gente a hablar de forma natural sin que el idioma sea una barrera. ¿Quieres ayudarme a probar una versión inicial? Me encantaría escuchar qué piensas después.",
+  consentBody: "Estoy creando una app para ayudar a las personas a conectar y conversar de forma natural cuando hablan idiomas diferentes. ¿Quieres ayudarme a probar una versión inicial? Me encantaría saber qué piensas después.",
   yesBtn: "Sí, vamos a probarlo", noBtn: "No, gracias",
   declineBody: "No hay problema, ¡gracias por considerarlo! Que tengas buena noche.",
   namePrompt: "¿Cómo te llamas?", nameContinue: "Empezar la conversación",
   inputPlaceholderGuest: "Escribe en tu idioma...", sendBtn: "Enviar", endBtn: "Terminar la conversación",
-  dialectHint: "Esto ayuda a que la traducción se ajuste a cómo habla realmente la gente de tu región. Ya está puesto en estándar, cámbialo solo si un dialecto específico te queda mejor.",
-  keyboardHint: "Consejo: toca el \ud83c\udf10 en tu teclado para cambiar",
+  dialectHint: "Esto ayuda a que la traducción se adapte a cómo habla realmente la gente de tu región. Ya está configurado en estándar, así que cámbialo solo si te resulta más adecuado un dialecto específico.",
+  keyboardHint: "Consejo: toca el 🌐 en tu teclado para cambiar de idioma",
   keyboardSetupHint: "Si el teclado de este dispositivo no está configurado para tu idioma, es buena idea pedirle al anfitrión que te ayude a configurarlo antes de empezar.",
   devHint: "Esta app todavía está en desarrollo y puede que a veces no funcione perfectamente. Si notas algo raro, puedes mencionarlo en los comentarios después de esta conversación.",
   feedbackTitle: "¿Qué te pareció?",
@@ -526,13 +533,14 @@ es: { base: {
   feedbackPlaceholder: "Comparte lo que piensas...", feedbackSubmit: "Enviar comentarios",
   translatingLabel: "Traduciendo...", retryLabel: "Toca para reintentar",
   thanksTitle: "¡Gracias!",
-  thanksIntro: "De verdad agradezco que lo hayas probado y compartido tus pensamientos. Espero que esto ayude a conectar más fácilmente en eventos como este, sobre todo cuando el inglés se siente como una barrera. Esto es solo una prueba inicial. Esto es parte de lo que espero agregar:",
+  thanksIntro: "De verdad agradezco que la hayas probado y compartido tus opiniones. Espero que ayude a que sea más fácil conectar con personas que hablan otros idiomas, sobre todo cuando no tienen un idioma en común que ambos puedan usar con comodidad. Esto es solo una prueba inicial. Estas son algunas de las funciones que espero añadir:",
   thanksFeatures: [
-    "Recordar a las personas con las que has hablado, para que si nos volvemos a encontrar en un evento como este, te dé un resumen rápido de quiénes son y de qué hablaron antes",
     "Diferentes opciones de tono, como cambiar entre algo casual con amigos o más formal cuando acabas de conocer a alguien, para que las conversaciones no suenen todas igual",
-    "Hablar desde tu propio teléfono en lugar de pasarlo de mano en mano, incluyendo la opción de simplemente hablar en vez de escribir"
+    "Entrada por voz para conversaciones en persona, para que cuando usen la app juntos en un solo teléfono puedas hablar en lugar de escribir",
+    "Historial de conversaciones para volver a ver chats anteriores y generar un resumen rápido de quién es la otra persona y de qué hablaron, para que sea más fácil retomar la conexión cuando vuelvan a encontrarse",
+    "Una función tipo mensajería para seguir hablando con las personas con las que conectes, usando cada uno su propio teléfono, para que puedan continuar la conversación en distintos idiomas incluso después de separarse"
   ],
-  thanksClosing: "Si alguna vez quieres contactarme sobre esto, o cualquier otra cosa, de verdad me encantaría saber de ti. Y si se te ocurre algo más después, siempre estoy feliz de escucharlo.",
+  thanksClosing: "Si alguna vez quieres ponerte en contacto conmigo sobre la app o sobre cualquier otra cosa, de verdad me encantará saber de ti. Y si más adelante se te ocurre algo que quieras compartir, no dudes en escribirme cuando quieras.",
   preparingNote: "Terminando de preparar tu comentario...",
   finishBtn: "Listo", sentLabel: "¡Listo!", sendingLabel: "Enviando...", redirectingLabel: "Volviendo al inicio en {n}..."
 }, dialects: {
@@ -551,29 +559,30 @@ es: { base: {
    overridden per language below; worth a native speaker spot check before Friday,
    especially for the less common ones. */
 hi: { base: {
-  appTagline: "अपने अंदाज़ में बात करें",
+  appTagline: "भाषा अलग हो, फिर भी बात करें",
   consentTitle: "नमस्ते!",
-  consentBody: "मैं एक ऐसा ऐप बना रहा हूं जो लोगों को भाषा की दीवार के बावजूद स्वाभाविक रूप से बात करने में मदद करे। क्या आप इसका शुरुआती वर्जन आज़मा कर मेरी मदद करना चाहेंगे? बाद में आपकी राय सुनना अच्छा लगेगा।",
+  consentBody: "मैं एक ऐसा ऐप बना रहा हूं जो अलग-अलग भाषाएं बोलने वाले लोगों को आपस में जुड़ने और स्वाभाविक रूप से बात करने में मदद करे। क्या आप इसका शुरुआती वर्ज़न आज़माकर मेरी मदद करना चाहेंगे? बाद में आपकी राय सुनकर मुझे खुशी होगी।",
   yesBtn: "हां, आज़माते हैं", noBtn: "नहीं, धन्यवाद",
   declineBody: "कोई बात नहीं, सोचने के लिए धन्यवाद! आपकी शाम अच्छी रहे।",
   namePrompt: "आपका नाम क्या है?", nameContinue: "बातचीत शुरू करें",
   inputPlaceholderGuest: "अपनी भाषा में लिखें...", sendBtn: "भेजें", endBtn: "बातचीत खत्म करें",
-  dialectHint: "इससे अनुवाद आपके इलाके में लोग जैसे बोलते हैं, वैसा लगेगा। यह पहले से मानक पर सेट है, केवल तभी बदलें जब कोई और भाषा/बोली आपके लिए बेहतर हो।",
-  keyboardHint: "टिप: बदलने के लिए कीबोर्ड पर \ud83c\udf10 दबाएं",
+  dialectHint: "इससे अनुवाद आपके इलाके में लोग जिस तरह बोलते हैं, उसके मुताबिक होगा। यह पहले से मानक पर सेट है, इसलिए तभी बदलें जब कोई दूसरी बोली आपके लिए ज़्यादा उपयुक्त हो।",
+  keyboardHint: "टिप: भाषाएं बदलने के लिए कीबोर्ड पर 🌐 दबाएं",
   keyboardSetupHint: "अगर इस डिवाइस के कीबोर्ड में अभी आपकी भाषा टाइप करने का विकल्प नहीं है, तो शुरू करने से पहले होस्ट से मदद मांग लेना अच्छा रहेगा।",
-  devHint: "यह ऐप अभी बन ही रहा है, इसलिए हो सकता है कभी-कभी ठीक से काम न करे। अगर कुछ अजीब लगे, तो बातचीत खत्म होने के बाद फीडबैक में बता दें।",
+  devHint: "यह ऐप अभी विकास के दौर में है, इसलिए हो सकता है कि कभी-कभी ठीक से काम न करे। अगर कुछ अजीब लगे, तो बातचीत खत्म होने के बाद फीडबैक में बता दें।",
   feedbackTitle: "कैसा लगा?",
   feedbackBody: "क्या अनुवाद स्वाभाविक लगा? क्या लगता है ऐसी चीज़ सच में काम की हो सकती है? अच्छी या बुरी, कोई भी राय बताएं।",
   feedbackPlaceholder: "अपनी राय लिखें...", feedbackSubmit: "फीडबैक भेजें",
   translatingLabel: "अनुवाद हो रहा है...", retryLabel: "फिर से कोशिश करने के लिए दबाएं",
   thanksTitle: "धन्यवाद!",
-  thanksIntro: "इसे आज़माने और अपनी राय बताने के लिए सच में धन्यवाद। उम्मीद है इससे ऐसे इवेंट्स में लोगों से जुड़ना आसान होगा, खासकर जब अंग्रेज़ी एक दीवार जैसी लगे। यह अभी बस शुरुआती टेस्ट है, आगे इसमें ये जोड़ने की सोच रहा हूं:",
+  thanksIntro: "इसे आज़माने और अपनी राय साझा करने के लिए सच में धन्यवाद। उम्मीद है इससे अलग-अलग भाषाएं बोलने वाले लोगों के लिए एक-दूसरे से जुड़ना आसान होगा, खासकर तब जब दोनों के पास कोई ऐसी साझा भाषा न हो जिसमें वे आराम से बात कर सकें। यह अभी सिर्फ शुरुआती टेस्ट है। आगे मैं इसमें ये चीज़ें जोड़ना चाहता हूँ:",
   thanksFeatures: [
-    "जिन लोगों से बात हुई उन्हें याद रखना, ताकि अगर ऐसे किसी इवेंट में दोबारा मिलें तो जल्दी याद आ जाए कि वे कौन हैं और पहले क्या बात हुई थी",
-    "अलग-अलग टोन के विकल्प, जैसे दोस्तों के साथ कैज़ुअल और नए मिले किसी व्यक्ति के साथ थोड़ा औपचारिक, ताकि हर बातचीत एक जैसी न लगे",
-    "फोन को हाथ में देने के बजाय अपने-अपने फोन से बात कर पाना, साथ ही टाइप करने की बजाय सिर्फ बोलने का विकल्प भी"
+    "अलग-अलग टोन के विकल्प, जैसे दोस्तों के साथ कैज़ुअल और किसी नए व्यक्ति के साथ थोड़ा औपचारिक, ताकि हर बातचीत एक जैसी न लगे",
+    "आमने-सामने की बातचीत के लिए वॉइस इनपुट, ताकि एक ही फोन पर साथ में ऐप इस्तेमाल करते समय टाइप करने की बजाय सीधे बोल सकें",
+    "बातचीत का इतिहास, जिससे आप पुरानी चैट देख सकें और यह जानने के लिए एक छोटा सारांश बना सकें कि सामने वाला कौन है और पहले क्या बात हुई थी, ताकि दोबारा मिलने पर बातचीत शुरू करना आसान हो",
+    "मैसेंजर जैसी सुविधा, जिससे जिन लोगों से आप जुड़े हैं उनसे अपने-अपने फोन पर बातचीत जारी रख सकें, और अलग-अलग भाषाओं में बात करना जारी रख सकें, भले ही बाद में आप अलग जगहों पर हों"
   ],
-  thanksClosing: "अगर आप कभी इस बारे में या किसी और बात पर संपर्क करना चाहें, तो मुझे सच में अच्छा लगेगा। और बाद में कुछ और सोचें तो वह भी बताने में हिचकिचाएं नहीं।",
+  thanksClosing: "अगर आप ऐप के बारे में या किसी और बात को लेकर मुझसे संपर्क करना चाहें, तो मुझे सच में खुशी होगी। बाद में कुछ और सूझे जिसे आप साझा करना चाहें, तो बेझिझक कभी भी संपर्क करें।",
   preparingNote: "आपका फीडबैक तैयार किया जा रहा है...",
   finishBtn: "हो गया", sentLabel: "धन्यवाद!", sendingLabel: "भेजा जा रहा है...", redirectingLabel: "{n} सेकंड में शुरुआत पर वापस जा रहे हैं..."
 }, dialects: {
@@ -652,89 +661,93 @@ hi: { base: {
 }},
 
 ms: { base: {
-  appTagline: "Bercakap Ikut Gaya Tempatan",
+  appTagline: "Berbual walaupun berbeza bahasa",
   consentTitle: "Hai!",
-  consentBody: "Saya sedang buat sesuatu untuk bantu orang bercakap secara semula jadi walaupun bahasa berbeza. Nak tolong saya cuba versi awal ni? Saya suka dengar pendapat awak lepas ni.",
+  consentBody: "Saya sedang membina aplikasi untuk membantu orang berhubung dan berbual secara semula jadi apabila mereka menggunakan bahasa yang berbeza. Nak tolong saya cuba versi awal ini? Saya memang nak dengar pendapat awak selepas itu.",
   yesBtn: "Baik, jom cuba", noBtn: "Tak apa, terima kasih",
-  declineBody: "Tak apa langsung, terima kasih sebab pertimbangkan! Semoga malam awak menyeronokkan.",
+  declineBody: "Tak apa, terima kasih sebab mempertimbangkannya! Semoga malam awak menyenangkan.",
   namePrompt: "Siapa nama awak?", nameContinue: "Mulakan perbualan",
   inputPlaceholderGuest: "Taip dalam bahasa awak...", sendBtn: "Hantar", endBtn: "Tamatkan perbualan",
-  dialectHint: "Ini membantu terjemahan sepadan dengan cara orang bercakap di tempat awak. Sudah ditetapkan kepada standard, tukar hanya jika ada gaya lain yang lebih sesuai untuk awak.",
-  keyboardHint: "Tip: ketik \ud83c\udf10 pada papan kekunci untuk tukar",
+  dialectHint: "Ini membantu terjemahan supaya sepadan dengan cara orang di tempat awak bercakap. Ia sudah ditetapkan kepada standard, jadi tukar hanya jika gaya lain lebih sesuai untuk awak.",
+  keyboardHint: "Tip: ketik 🌐 pada papan kekunci untuk menukar bahasa",
   keyboardSetupHint: "Kalau papan kekunci peranti ini belum boleh taip bahasa awak, elok minta tuan rumah bantu setkan dulu sebelum mula.",
   devHint: "Apl ini masih dalam pembangunan dan mungkin kadang-kadang tidak berfungsi seperti dijangka. Kalau perasan apa-apa yang pelik, boleh sebut dalam maklum balas selepas perbualan ini.",
-  feedbackTitle: "Macam mana rasanya?",
-  feedbackBody: "Terjemahan tu terasa semula jadi tak? Rasa ada guna tak benda macam ni? Apa-apa pendapat pun dialu-alukan, baik atau buruk.",
+  feedbackTitle: "Macam mana?",
+  feedbackBody: "Terjemahan tu rasa semula jadi tak? Rasa benda macam ni betul-betul berguna tak? Apa-apa pendapat pun dialu-alukan, baik atau buruk.",
   feedbackPlaceholder: "Kongsi pendapat awak...", feedbackSubmit: "Hantar maklum balas",
   translatingLabel: "Sedang terjemah...", retryLabel: "Ketik untuk cuba lagi",
   thanksTitle: "Terima kasih!",
-  thanksIntro: "Betul-betul hargai awak sudi cuba dan kongsi pendapat. Harap ini boleh permudahkan orang berhubung di acara macam ni, terutamanya bila Bahasa Inggeris jadi halangan. Ini baru ujian awal, ini antara benda yang saya harap boleh tambah nanti:",
+  thanksIntro: "Saya betul-betul hargai kesudian awak mencuba dan berkongsi pendapat. Harapnya aplikasi ini boleh memudahkan orang yang menggunakan bahasa berbeza untuk berhubung, terutamanya apabila mereka tidak mempunyai bahasa yang sama yang kedua-duanya selesa gunakan. Ini baru ujian awal, dan ini antara ciri yang saya harap dapat ditambah nanti:",
   thanksFeatures: [
-    "Ingat orang yang awak pernah berbual dengannya, supaya kalau jumpa lagi di acara macam ni, boleh dapat ringkasan pantas siapa mereka dan apa yang dibincangkan dulu",
-    "Pilihan nada berbeza, seperti bertukar antara santai dengan kawan atau lebih formal bila baru kenal seseorang, supaya perbualan tak terdengar sama je",
-    "Bercakap melalui telefon masing-masing tanpa perlu berikan telefon bergilir-gilir, termasuk pilihan untuk bercakap je berbanding menaip"
+    "Pilihan nada yang berbeza, seperti gaya santai dengan kawan atau lebih formal apabila baru berkenalan, supaya setiap perbualan tidak kedengaran sama",
+    "Input suara untuk perbualan secara bersemuka, supaya apabila menggunakan aplikasi bersama pada satu telefon, awak boleh bercakap tanpa perlu menaip",
+    "Sejarah perbualan yang membolehkan awak melihat semula chat lama dan menjana ringkasan ringkas tentang siapa seseorang itu atau apa yang pernah dibincangkan, supaya lebih mudah untuk berhubung semula apabila berjumpa lagi",
+    "Ciri seperti aplikasi mesej untuk terus berbual dengan orang yang awak kenal, dengan setiap orang menggunakan telefon sendiri, supaya perbualan dalam bahasa berbeza boleh diteruskan walaupun sudah berpisah"
   ],
-  thanksClosing: "Kalau awak nak hubungi saya pasal ni, atau apa-apa je, saya memang suka dengar dari awak. Kalau ada idea lain lepas ni, saya sentiasa sedia dengar.",
+  thanksClosing: "Kalau awak nak hubungi saya tentang aplikasi ini atau apa-apa saja, saya memang suka dengar daripada awak. Kalau terfikir apa-apa lagi yang awak nak kongsi nanti, jangan segan untuk hubungi saya bila-bila masa.",
   preparingNote: "Sedang siapkan maklum balas awak...",
   finishBtn: "Selesai", sentLabel: "Terima kasih!", sendingLabel: "Sedang hantar...", redirectingLabel: "Kembali ke permulaan dalam {n} saat..."
 }, dialects: {} },
 
 my: { base: {
-  appTagline: "ဒေသန္တရ အရသာနဲ့ စကားပြော",
+  appTagline: "ဘာသာစကားမတူပေမယ့် စကားပြောနိုင်ပါတယ်",
   consentTitle: "မင်္ဂလာပါ!",
-  consentBody: "ဘာသာစကားအတားအဆီးရှိပေမယ့် လူတွေ သဘာဝကျကျ စကားပြောနိုင်ဖို့ အက်ပ်တစ်ခု ဖန်တီးနေပါတယ်။ အစောပိုင်း ဗားရှင်းကို စမ်းသပ်ဖို့ ကူညီပေးလိုပါသလား? ပြီးရင် သင့်ရဲ့ အမြင်ကို ကြားချင်ပါတယ်။",
+  consentBody: "မတူညီတဲ့ ဘာသာစကားတွေကို ပြောတဲ့သူတွေ အချင်းချင်း ချိတ်ဆက်ပြီး သဘာဝကျကျ စကားပြောနိုင်အောင် ကူညီပေးမယ့် အက်ပ်တစ်ခု ဖန်တီးနေပါတယ်။ အစောပိုင်းဗားရှင်းကို စမ်းသပ်ဖို့ ကူညီပေးချင်ပါသလား။ ပြီးရင် သင့်အမြင်ကို ကြားချင်ပါတယ်။",
   yesBtn: "ဟုတ်ကဲ့၊ စမ်းကြည့်ရအောင်", noBtn: "မလိုပါဘူး၊ ကျေးဇူးပါ",
   declineBody: "ပြဿနာမရှိပါဘူး၊ စဉ်းစားပေးလို့ ကျေးဇူးတင်ပါတယ်! ညနေခင်း ကောင်းပါစေ။",
   namePrompt: "သင့်နာမည် ဘယ်လိုခေါ်လဲ?", nameContinue: "စကားစမြည်ပြောစတင်ရန်",
   inputPlaceholderGuest: "သင့်ဘာသာစကားနဲ့ ရိုက်ထည့်ပါ...", sendBtn: "ပို့ရန်", endBtn: "စကားစမြည် အဆုံးသတ်ရန်",
   dialectHint: "ဒါက သင့်ဒေသက လူတွေ တကယ်ပြောနေတဲ့ပုံစံနဲ့ ဘာသာပြန်ကို ကိုက်ညီအောင် ကူညီပေးပါတယ်။ စံပြပုံစံအဖြစ် သတ်မှတ်ထားပြီးသားဖြစ်ပြီး၊ တခြားဒေသိယစကားက ပိုကိုက်ညီမယ်ဆိုရင်သာ ပြောင်းပါ။",
-  keyboardHint: "အကြံပြုချက်: ကီးဘုတ်ပေါ်က \ud83c\udf10 ကို နှိပ်ပြီး ပြောင်းပါ",
+  keyboardHint: "အကြံပြုချက်: ကီးဘုတ်ပေါ်က 🌐 ကို နှိပ်ပြီး ဘာသာစကားပြောင်းပါ",
   keyboardSetupHint: "ဒီစက်ရဲ့ ကီးဘုတ်က သင့်ဘာသာစကားကို မရိုက်နိုင်သေးဘူးဆိုရင်၊ စမပြောင်းခင် အိမ်ရှင်ကို ကူညီပေးဖို့ တောင်းဆိုထားတာ ကောင်းပါတယ်။",
-  devHint: "ဒီအက်ပ်က ဖွံ့ဖြိုးတိုးတက်နေဆဲဖြစ်လို့ တခါတလေ မှန်ကန်စွာ အလုပ်မလုပ်ချင်ပါဘူး။ တစ်ခုခု မှန်မှန်မကန်ဖြစ်နေတာ တွေ့ရင် စကားစမြည် ပြီးတဲ့နောက် အကြံပြုချက်မှာ ပြောပြနိုင်ပါတယ်။",
-  feedbackTitle: "ဘယ်လိုခံစားရလဲ?",
-  feedbackBody: "ဘာသာပြန်က သဘာဝကျလား? ဒီလိုအရာက တကယ်အသုံးဝင်နိုင်မယ်လို့ထင်လား? ကောင်းသည်ဖြစ်စေ၊ ညံ့သည်ဖြစ်စေ မည်သည့်အမြင်ကိုမဆို ကြိုဆိုပါတယ်။",
+  devHint: "ဒီအက်ပ်က ဖွံ့ဖြိုးတိုးတက်နေဆဲဖြစ်လို့ တစ်ခါတလေ ကောင်းကောင်း အလုပ်မလုပ်နိုင်ပါဘူး။ တစ်ခုခု မမှန်တာတွေ့ရင် စကားပြောပြီးတဲ့နောက် အကြံပြုချက်မှာ ပြောပြနိုင်ပါတယ်။",
+  feedbackTitle: "ဘယ်လိုထင်လဲ?",
+  feedbackBody: "ဘာသာပြန်တာ သဘာဝကျလား။ ဒီလိုအရာမျိုးက တကယ်အသုံးဝင်မယ်လို့ ထင်လား။ ကောင်းတာဖြစ်ဖြစ်၊ မကောင်းတာဖြစ်ဖြစ် ဘယ်လိုအမြင်မဆို ကြိုဆိုပါတယ်။",
   feedbackPlaceholder: "သင့်အမြင်ကို မျှဝေပါ...", feedbackSubmit: "အကြံပြုချက် ပို့ရန်",
   translatingLabel: "ဘာသာပြန်နေသည်...", retryLabel: "ထပ်စမ်းရန် နှိပ်ပါ",
   thanksTitle: "ကျေးဇူးတင်ပါတယ်!",
-  thanksIntro: "ဒါကို စမ်းသပ်ပြီး အမြင်ကို မျှဝေပေးလို့ တကယ်ကျေးဇူးတင်ပါတယ်။ အင်္ဂလိပ်စာက အတားအဆီးဖြစ်နေတဲ့အခါမျိုးမှာ ဒီလိုပွဲမျိုးတွေမှာ ချိတ်ဆက်ဖို့ ပိုလွယ်ကူစေမယ်လို့ မျှော်လင့်ပါတယ်။ ဒါက အစောပိုင်း စမ်းသပ်မှုပဲရှိသေးလို့၊ နောက်ထပ် ထည့်သွင်းချင်တဲ့အရာတွေကတော့-",
+  thanksIntro: "ဒါကို စမ်းသုံးပြီး အမြင်ကို မျှဝေပေးလို့ တကယ်ကျေးဇူးတင်ပါတယ်။ မတူညီတဲ့ ဘာသာစကားတွေကို ပြောတဲ့သူတွေအတွက် အချင်းချင်း ပိုလွယ်လွယ်ကူကူ ချိတ်ဆက်နိုင်အောင် ကူညီပေးနိုင်မယ်လို့ မျှော်လင့်ပါတယ်။ အထူးသဖြင့် နှစ်ယောက်လုံး အဆင်ပြေပြေ အသုံးပြုနိုင်တဲ့ ဘာသာစကားတစ်ခု မရှိတဲ့အခါမှာ ပိုအသုံးဝင်မယ်လို့ မျှော်လင့်ပါတယ်။ ဒါက အစောပိုင်း စမ်းသပ်မှုတစ်ခုပဲ ရှိသေးပြီး နောက်ပိုင်းမှာ ထည့်ချင်တဲ့ လုပ်ဆောင်ချက်တွေကတော့-",
   thanksFeatures: [
-    "စကားပြောခဲ့ဖူးတဲ့သူတွေကို မှတ်မိထားတာ၊ ဒီလိုပွဲမျိုးမှာ ထပ်တွေ့ရင် သူတို့ဘယ်သူလဲ၊ ဘာစကားပြောခဲ့လဲဆိုတာကို လျင်မြန်စွာ ပြန်သတိရနိုင်အောင်",
-    "အသံသံစဉ် ရွေးချယ်စရာအမျိုးမျိုး၊ သူငယ်ချင်းနဲ့ဆို ပေါ့ပေါ့ပါးပါး၊ လူသစ်နဲ့ဆို ပိုယဉ်ကျေးအောင်၊ စကားစမြည်တိုင်း အသံတူမနေအောင်",
-    "ဖုန်းကို လက်ဆင့်ကမ်းစရာမလိုဘဲ ကိုယ်ပိုင်ဖုန်းနဲ့ စကားပြောနိုင်တာ၊ စာရိုက်မယ့်အစား ပြောရုံနဲ့ရနိုင်တဲ့ ရွေးချယ်စရာပါ"
+    "အသံအနေအထား ရွေးချယ်စရာအမျိုးမျိုး၊ သူငယ်ချင်းနဲ့ဆို ပေါ့ပေါ့ပါးပါး၊ လူသစ်နဲ့ဆို ပိုယဉ်ကျေးအောင်၊ စကားပြောသူအလိုက် ပြောင်းလဲနိုင်အောင်",
+    "မျက်နှာချင်းဆိုင် စကားပြောရာမှာ အသံနဲ့ ထည့်သွင်းနိုင်တဲ့ လုပ်ဆောင်ချက်၊ ဖုန်းတစ်လုံးတည်းကို အတူသုံးတဲ့အခါ စာရိုက်မယ့်အစား ပြောပြီး ထည့်သွင်းနိုင်အောင်",
+    "စကားပြောမှတ်တမ်းကို ပြန်ကြည့်နိုင်တဲ့ လုပ်ဆောင်ချက်၊ အရင် chat တွေကို ပြန်ကြည့်ပြီး အဲဒီလူက ဘယ်သူလဲ၊ အရင်က ဘာတွေပြောခဲ့လဲဆိုတာကို အကျဉ်းချုပ်ဖန်တီးနိုင်အောင်၊ ပြန်တွေ့တဲ့အခါ စကားပြန်ဆက်ဖို့ ပိုလွယ်ကူအောင်",
+    "မက်ဆေ့ချ်အက်ပ်လိုပဲ ချိတ်ဆက်ထားတဲ့သူတွေနဲ့ ဆက်ပြီး စကားပြောနိုင်တဲ့ လုပ်ဆောင်ချက်၊ တစ်ယောက်ချင်းစီက ကိုယ့်ဖုန်းကိုယ်သုံးပြီး ခွဲခွာသွားပြီးတဲ့နောက်တောင် မတူညီတဲ့ ဘာသာစကားတွေနဲ့ စကားဆက်ပြောနိုင်အောင်"
   ],
-  thanksClosing: "ဒီအကြောင်း ဒါမှမဟုတ် တခြားအရာနဲ့ပတ်သက်ပြီး ဆက်သွယ်ချင်ရင် အမြဲကြိုဆိုပါတယ်။ နောက်ပိုင်း ထပ်တွေးမိတာရှိရင်လည်း အမြဲနားထောင်ဖို့ အသင့်ပါ။",
+  thanksClosing: "အက်ပ်အကြောင်းပဲဖြစ်ဖြစ်၊ တခြားအကြောင်းပဲဖြစ်ဖြစ် မေးမြန်းဆက်သွယ်ချင်ရင် အမြဲတမ်း ဝမ်းသာစွာ ကြားချင်ပါတယ်။ နောက်ပိုင်းမှာ ထပ်ပြီး မျှဝေချင်တာတစ်ခုခု စဉ်းစားမိရင်လည်း အချိန်မရွေး ဆက်သွယ်နိုင်ပါတယ်။",
   preparingNote: "သင့်အကြံပြုချက်ကို ပြင်ဆင်နေသည်...",
   finishBtn: "ပြီးပါပြီ", sentLabel: "ကျေးဇူးတင်ပါတယ်!", sendingLabel: "ပို့နေသည်...", redirectingLabel: "{n} စက္ကန့်အတွင်း အစသို့ ပြန်သွားပါမည်..."
 }, dialects: {} },
 
 id: { base: {
-  appTagline: "Ngobrol Sesuai Gaya Lokal",
+  appTagline: "Ngobrol meski beda bahasa",
   consentTitle: "Hai!",
-  consentBody: "Saya sedang membuat sesuatu untuk membantu orang mengobrol secara alami meski beda bahasa. Mau bantu saya coba versi awalnya? Saya senang dengar pendapat kamu setelahnya.",
+  consentBody: "Saya sedang membuat aplikasi untuk membantu orang terhubung dan mengobrol secara alami saat mereka menggunakan bahasa yang berbeda. Mau bantu saya mencoba versi awalnya? Saya ingin mendengar pendapat kamu setelahnya.",
   yesBtn: "Ya, ayo coba", noBtn: "Tidak, terima kasih",
-  declineBody: "Tidak masalah sama sekali, terima kasih sudah mempertimbangkannya! Semoga malammu menyenangkan.",
+  declineBody: "Tidak masalah, terima kasih sudah mempertimbangkannya! Semoga malammu menyenangkan.",
   namePrompt: "Siapa namamu?", nameContinue: "Mulai percakapan",
   inputPlaceholderGuest: "Ketik dalam bahasamu...", sendBtn: "Kirim", endBtn: "Akhiri percakapan",
-  dialectHint: "Ini membantu terjemahan sesuai dengan cara orang di daerahmu benar-benar bicara. Sudah diatur ke standar, ubah hanya jika ada gaya lain yang lebih cocok untukmu.",
-  keyboardHint: "Tip: ketuk \ud83c\udf10 di keyboard untuk berganti",
+  dialectHint: "Ini membantu terjemahan agar sesuai dengan cara orang di daerahmu benar-benar berbicara. Sudah diatur ke standar, jadi ubah hanya jika ada gaya lain yang lebih cocok untukmu.",
+  keyboardHint: "Tip: ketuk 🌐 di keyboard untuk mengganti bahasa",
   keyboardSetupHint: "Kalau keyboard perangkat ini belum bisa mengetik bahasamu, sebaiknya minta tuan rumah bantu mengaturnya dulu sebelum mulai.",
   devHint: "Aplikasi ini masih dalam pengembangan dan mungkin kadang belum berjalan sempurna. Kalau ada yang terasa aneh, boleh disampaikan di kolom masukan setelah percakapan ini.",
-  feedbackTitle: "Bagaimana rasanya?",
-  feedbackBody: "Apakah terjemahannya terasa alami? Menurutmu hal seperti ini bisa benar-benar berguna? Pendapat apa pun boleh, baik atau kurang baik.",
+  feedbackTitle: "Bagaimana menurutmu?",
+  feedbackBody: "Apakah terjemahannya terasa alami? Menurutmu, hal seperti ini benar-benar bisa berguna? Pendapat apa pun boleh, baik atau buruk.",
   feedbackPlaceholder: "Bagikan pendapatmu...", feedbackSubmit: "Kirim masukan",
   translatingLabel: "Menerjemahkan...", retryLabel: "Ketuk untuk coba lagi",
   thanksTitle: "Terima kasih!",
-  thanksIntro: "Benar-benar berterima kasih kamu mau mencoba dan berbagi pendapat. Semoga ini bisa membantu orang terhubung lebih mudah di acara seperti ini, terutama saat bahasa Inggris terasa jadi penghalang. Ini baru uji coba awal, berikut beberapa hal yang ingin saya tambahkan nanti:",
+  thanksIntro: "Terima kasih banyak sudah mau mencoba dan berbagi pendapat. Semoga aplikasi ini membantu orang yang menggunakan bahasa berbeda untuk lebih mudah terhubung, terutama saat mereka tidak punya bahasa yang sama-sama nyaman digunakan untuk berkomunikasi. Ini baru uji coba awal, dan berikut beberapa fitur yang ingin saya tambahkan nanti:",
   thanksFeatures: [
-    "Mengingat orang-orang yang pernah kamu ajak bicara, jadi kalau bertemu lagi di acara serupa, bisa dapat ringkasan singkat siapa mereka dan apa yang pernah dibahas",
-    "Pilihan nada bicara berbeda, seperti berganti antara santai dengan teman atau lebih formal saat baru kenal seseorang, supaya percakapan tidak terdengar sama semua",
-    "Bisa mengobrol lewat ponsel masing-masing tanpa harus bergantian memegang satu ponsel, termasuk pilihan untuk bicara saja alih-alih mengetik"
+    "Pilihan nada bicara yang berbeda, seperti santai dengan teman atau lebih formal saat baru kenal seseorang, supaya percakapan tidak terdengar sama semua",
+    "Input suara untuk percakapan tatap muka, jadi saat menggunakan aplikasi bersama di satu ponsel, kamu bisa berbicara tanpa harus mengetik",
+    "Riwayat percakapan yang memungkinkan kamu melihat kembali chat sebelumnya dan membuat ringkasan singkat tentang siapa orang tersebut atau apa yang pernah kalian bicarakan, sehingga lebih mudah untuk terhubung lagi saat bertemu",
+    "Fitur seperti aplikasi pesan untuk melanjutkan percakapan dengan orang yang sudah kamu kenal, dengan masing-masing menggunakan ponselnya sendiri, sehingga kalian tetap bisa berbicara dalam bahasa yang berbeda meski sudah berpisah"
   ],
-  thanksClosing: "Kalau suatu saat kamu ingin menghubungi saya soal ini, atau hal lain, saya benar-benar senang mendengarnya. Dan kalau ada pemikiran lain nanti, saya selalu senang mendengarnya.",
+  thanksClosing: "Kalau suatu saat kamu ingin menghubungi saya tentang aplikasi ini atau hal lain, saya benar-benar senang mendengar dari kamu. Kalau nanti terpikir sesuatu yang ingin kamu bagikan, jangan ragu untuk menghubungi saya kapan saja.",
   preparingNote: "Sedang menyiapkan masukanmu...",
   finishBtn: "Selesai", sentLabel: "Terima kasih!", sendingLabel: "Mengirim...", redirectingLabel: "Kembali ke awal dalam {n} detik..."
 }, dialects: {} }
 };
+
 
 /* ============ STATE ============ */
 function freshState(){
