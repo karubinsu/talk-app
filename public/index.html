@@ -977,8 +977,15 @@ Leave "note_en" and "note_local" as null together only when the translation is a
 }
 
 /* ============ RENDER HELPERS ============ */
-function markSVG() {
-  return `<img src="/logo.png" alt="Logo" width="26" height="26" />`;
+function markSVG(){
+  return `<svg viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="9" cy="9" r="7.5" stroke="url(#g1)" stroke-width="1.6"/>
+    <circle cx="17" cy="17" r="7.5" stroke="url(#g2)" stroke-width="1.6"/>
+    <defs>
+      <linearGradient id="g1" x1="1" y1="1" x2="17" y2="17"><stop stop-color="#ff8b5e"/><stop offset="1" stop-color="#f2c14e"/></linearGradient>
+      <linearGradient id="g2" x1="9" y1="9" x2="25" y2="25"><stop stop-color="#f2c14e"/><stop offset="1" stop-color="#ff8b5e"/></linearGradient>
+    </defs>
+  </svg>`;
 }
 function markHeader(){
   const showBack = state.history.length > 0 && state.screen !== 'thanks';
