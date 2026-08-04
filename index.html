@@ -893,10 +893,10 @@ You'll be given the full conversation so far, including, for each earlier turn, 
 - If the message you're translating now is a reply to an earlier message that was rephrased for naturalness, translate this reply so that, once translated, it reads as a coherent, directly-connected answer to the ORIGINAL question or statement the first person actually made in their own language, not to the rephrased version. The person who asked the original question should feel like they got a direct answer to what they actually asked.
 - Only adjust what's necessary for that connection to read naturally, never invent facts or change the substance of what the person actually said.
 
-Respond with ONLY a valid JSON object shaped exactly like {"translated": "...", "note": null}, no markdown fences, no commentary outside the JSON. Set "note" to a short, casual, plain-English explanation (one to two sentences) whenever either of these is true:
+Respond with ONLY a valid JSON object shaped exactly like {"translated": "...", "note_en": null, "note_local": null}, no markdown fences, no commentary outside the JSON. Set BOTH "note_en" (written naturally in English) and "note_local" (written naturally in ${langName()}${dialectPart}, not translated word-for-word from the English one) to the same short, casual explanation whenever either of these is true:
 1. Your natural translation meaningfully departs from a literal, word-for-word reading of the source. Briefly say what the literal version would've sounded like and why you rephrased it.
 2. This message is a reply that only fully makes sense because of an earlier rephrasing. Briefly explain that connection, e.g. that this reply is answering the earlier rephrased question, so the other person understands why the reply lines up with what they originally asked.
-Leave "note" as null only when the translation is a normal direct match to the source AND isn't affected by any earlier rephrasing. Most messages should still have a null note, only flag when it's genuinely useful context.`;
+Leave "note_en" and "note_local" as null together only when the translation is a normal direct match to the source AND isn't affected by any earlier rephrasing. Most messages should still have null notes, only flag when it's genuinely useful context. Never fill in one and leave the other null, both are always present together or both null.`;
 
   const instruction = direction === 'toEnglish'
     ? `Full conversation so far:\n${historyLines || '(this is the first message)'}\n\nNow translate this new message from ${langName()}${dialectPart} into natural, casual English:\n\n"${text}"`
@@ -907,11 +907,13 @@ Leave "note" as null only when the translation is a normal direct match to the s
   const cleaned = raw.replace(/^```json\s*/,'').replace(/```$/,'').trim();
   try{
     const parsed = JSON.parse(cleaned);
-    if(parsed && typeof parsed.translated === 'string') return { translated: parsed.translated, note: parsed.note || null };
+    if(parsed && typeof parsed.translated === 'string'){
+      return { translated: parsed.translated, noteEn: parsed.note_en || null, noteLocal: parsed.note_local || null };
+    }
     throw new Error('unexpected shape');
   }catch(e){
-    // Fallback for a non-JSON reply: use it as the translation with no note.
-    return { translated: raw.trim(), note: null };
+    // Fallback for a non-JSON reply: use it as the translation with no notes.
+    return { translated: raw.trim(), noteEn: null, noteLocal: null };
   }
 }
 
@@ -1171,11 +1173,15 @@ function bubbleHtml(m){
       <div class="orig">${m.original}</div>
     </div>`;
   }
-  const hasTip = !!m.note;
+  // Show the tip in whichever language the person currently holding the
+  // phone (the active side of the turn toggle) actually reads, regardless
+  // of which bubble the tip is attached to.
+  const noteText = state.turn === 'guest' ? m.noteLocal : m.noteEn;
+  const hasTip = !!noteText;
   return `<div class="msg ${m.sender}${hasTip ? ' has-tip' : ''}" data-id="${m.id}">
     <div>${m.translated}</div>
     <div class="orig">${m.original}</div>
-    ${hasTip ? `<span class="tip-marker"></span><div class="msg-tip${activeTipId===m.id ? ' show' : ''}">💬 ${m.note}</div>` : ''}
+    ${hasTip ? `<span class="tip-marker"></span><div class="msg-tip${activeTipId===m.id ? ' show' : ''}">💬 ${noteText}</div>` : ''}
   </div>`;
 }
 
@@ -1183,8 +1189,8 @@ async function doTranslate(msgId, text, direction){
   try{
     const result = await translateMessage(text, direction);
     const m = state.messages.find(x=>x.id===msgId);
-    if(m){ m.translated = result.translated; m.note = result.note || null; m.status = 'done'; }
-    if(m && m.note){ toggleTip(msgId); return; }
+    if(m){ m.translated = result.translated; m.noteEn = result.noteEn; m.noteLocal = result.noteLocal; m.status = 'done'; }
+    if(m && (m.noteEn || m.noteLocal)){ toggleTip(msgId); return; }
   }catch(e){
     const m = state.messages.find(x=>x.id===msgId);
     if(m){ m.status = 'error'; }
@@ -1283,7 +1289,7 @@ function renderFeedback(){
     (async () => {
       try{
         state.feedbackTranslatedToEnglish = state.feedbackText
-          ? await translateMessage(state.feedbackText, 'toEnglish')
+          ? (await translateMessage(state.feedbackText, 'toEnglish')).translated
           : '(no feedback entered)';
       }catch(e){
         state.feedbackTranslatedToEnglish = state.feedbackText || '(no feedback entered)';
