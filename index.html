@@ -80,11 +80,11 @@
   .msg.host{align-self:flex-start;background:var(--card);border-bottom-left-radius:4px;}
   .msg .orig{font-size:12px;color:var(--text-muted);margin-top:5px;}
   .msg.has-tip{cursor:pointer;}
-  .tip-marker{position:absolute;top:6px;width:8px;height:8px;border-radius:3px;transform:rotate(45deg);background:linear-gradient(135deg, var(--accent), var(--accent-2));box-shadow:0 0 0 2px var(--bg-soft);}
+  .tip-marker{position:absolute;bottom:5px;font-size:10px;line-height:1;pointer-events:none;filter:drop-shadow(0 1px 1px rgba(0,0,0,0.35));}
   .msg.host .tip-marker{right:6px;}
   .msg.guest .tip-marker{left:6px;}
-  .msg-tip{max-height:0;opacity:0;overflow:hidden;font-size:12.5px;line-height:1.42;color:var(--text-muted);background:rgba(0,0,0,0.16);border-radius:10px;padding:0 10px;margin-top:0;transition:max-height .25s ease, opacity .2s ease, margin-top .25s ease, padding .25s ease;}
-  .msg-tip.show{max-height:160px;opacity:1;padding:8px 10px;margin-top:8px;}
+  .msg-tip{width:0;max-height:0;opacity:0;overflow:hidden;font-size:12.5px;line-height:1.42;color:var(--text-muted);background:rgba(0,0,0,0.16);border-radius:10px;padding:0 10px;margin-top:0;transition:max-height .25s ease, opacity .2s ease, margin-top .25s ease, padding .25s ease;}
+  .msg-tip.show{width:100%;max-height:160px;opacity:1;padding:8px 10px;margin-top:8px;}
   .msg.error{border:1px solid rgba(255,120,120,0.45);cursor:pointer;}
   .error-text{font-size:13px;color:#ff9a9a;display:flex;align-items:center;gap:6px;}
   .translating{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-muted);}
@@ -729,33 +729,44 @@ function freshState(){
 let state = freshState();
 let msgIdCounter = 0;
 
-// Transient (not persisted) tracking of which message's "no direct translation"
-// tip is currently expanded, and its auto-dismiss timer.
-// added manual toggle to dismiss
+// Transient (not persisted) tracking of which message's tip is currently
+// expanded, its auto-dismiss timer, and which tips have already been opened
+// once this session (first open = 5s auto-dismiss, reopening = 10s).
 let activeTipId = null;
 let tipTimeoutHandle = null;
+const openedTipIds = new Set();
 
-function toggleTip(id, duration = 5000) {
-  // Always clear any existing auto-dismiss timer first
+function closeActiveTip(){
   clearTimeout(tipTimeoutHandle);
-
-  // If clicking the currently active tip, dismiss it manually
-  if (activeTipId === id) {
-    activeTipId = null;
-  } else {
-    // Otherwise, activate the new tip
-    activeTipId = id;
-
-    // Set auto-dismiss timer if duration is provided
-    if (duration > 0) {
-      tipTimeoutHandle = setTimeout(() => {
-        activeTipId = null;
-        render();
-      }, duration);
-    }
+  if(activeTipId){
+    const el = document.querySelector(`.msg[data-id="${activeTipId}"] .msg-tip`);
+    if(el) el.classList.remove('show');
   }
+  activeTipId = null;
+}
 
-  render();
+// Opens a tip's DOM node directly (no render()) so the CSS transition on
+// .msg-tip has an actual "before" state to animate from, and schedules its
+// auto-dismiss: 5s the first time a given message's tip is opened, 10s on
+// every subsequent reopen. Manual dismiss (tapping again) always works
+// regardless of the timer, via closeActiveTip()/toggleTip() below.
+function openTip(id){
+  clearTimeout(tipTimeoutHandle);
+  activeTipId = id;
+  const el = document.querySelector(`.msg[data-id="${id}"] .msg-tip`);
+  if(el) el.classList.add('show');
+  const duration = openedTipIds.has(id) ? 10000 : 5000;
+  openedTipIds.add(id);
+  tipTimeoutHandle = setTimeout(closeActiveTip, duration);
+}
+
+function toggleTip(id){
+  if(activeTipId === id){ closeActiveTip(); return; }
+  if(activeTipId){
+    const prevEl = document.querySelector(`.msg[data-id="${activeTipId}"] .msg-tip`);
+    if(prevEl) prevEl.classList.remove('show');
+  }
+  openTip(id);
 }
 
 (function restore(){
@@ -1181,21 +1192,28 @@ function bubbleHtml(m){
   return `<div class="msg ${m.sender}${hasTip ? ' has-tip' : ''}" data-id="${m.id}">
     <div>${m.translated}</div>
     <div class="orig">${m.original}</div>
-    ${hasTip ? `<span class="tip-marker"></span><div class="msg-tip${activeTipId===m.id ? ' show' : ''}">💬 ${noteText}</div>` : ''}
+    ${hasTip ? `<span class="tip-marker">✨</span><div class="msg-tip${activeTipId===m.id ? ' show' : ''}">💬 ${noteText}</div>` : ''}
   </div>`;
 }
 
 async function doTranslate(msgId, text, direction){
+  let shouldOpenTip = false;
   try{
     const result = await translateMessage(text, direction);
     const m = state.messages.find(x=>x.id===msgId);
     if(m){ m.translated = result.translated; m.noteEn = result.noteEn; m.noteLocal = result.noteLocal; m.status = 'done'; }
-    if(m && (m.noteEn || m.noteLocal)){ toggleTip(msgId); return; }
+    if(m && (m.noteEn || m.noteLocal)) shouldOpenTip = true;
   }catch(e){
     const m = state.messages.find(x=>x.id===msgId);
     if(m){ m.status = 'error'; }
   }
   render();
+  if(shouldOpenTip){
+    // Wait a frame so the browser paints the bubble in its closed state
+    // first, otherwise the class gets added before any paint happens and
+    // the transition has nothing to animate from.
+    requestAnimationFrame(() => requestAnimationFrame(() => openTip(msgId)));
+  }
 }
 
 function renderChat(){
