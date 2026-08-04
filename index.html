@@ -872,24 +872,17 @@ async function getUIStrings(){
 
 async function translateMessage(text, direction){
   const dialectPart = state.dialect ? ` (${state.dialect} dialect/register)` : '';
-  const guestLabel = state.name || 'Guest';
   const historyLines = state.messages
     .filter(m => m.status === 'done')
-    .map(m => {
-      const speaker = m.sender === 'host' ? HOST_NAME : guestLabel;
-      const spokenLang = m.sender === 'host' ? 'English' : `${langName()}${dialectPart}`;
-      return `${speaker} said (in ${spokenLang}): "${m.original}"\n  -> shown to the other person as: "${m.translated}"`;
-    }).join('\n');
+    .slice(-6)
+    .map(m => `${m.sender === 'host' ? HOST_NAME : 'Guest'}: ${m.translated}`)
+    .join('\n');
 
-  const system = `You are a live interpreter helping two people who don't share a language have a natural, in-person conversation, not a formal document translator. Your top priority is producing the translation a native speaker would actually say in this situation, never a literal, word-for-word, or "calque" translation that just mirrors the source phrase's structure, even if that means rephrasing the idea differently. Avoid stiff or textbook phrasing, and never use em dashes, use commas, periods, or parentheses instead.
-
-You'll be given the full conversation so far, including, for each earlier turn, both what the speaker actually said and the natural rendering that was shown to the other person. Use this so your new translation stays consistent with what the other person actually saw and responded to. If someone is now replying to a rendering that was rephrased from a literal original, translate their reply so it still reads as a coherent answer to the ORIGINAL question the other person asked in their own language, not a mismatched answer to an overly literal phrasing.
-
-Respond with ONLY a valid JSON object shaped exactly like {"translated": "...", "note": null}, no markdown fences, no commentary outside the JSON. Set "note" to a short, casual, plain-English explanation (one to two sentences) ONLY when your natural translation meaningfully departs from a literal, word-for-word reading of the source, briefly saying what the literal version would've sounded like and why you rephrased it. Leave "note" as null whenever the natural and literal translations are basically the same, most messages should have a null note.`;
+  const system = `You are a live interpreter helping two people have a casual, natural conversation, not a formal document translator. Translate the way real native speakers actually talk day-to-day, including natural code-switching with English where that's genuinely how bilingual speakers of this language talk, only where it's authentic, don't force it in. Avoid stiff or textbook phrasing. Never use em dashes, use commas, periods, or parentheses instead. Use the conversation history only for tone and context continuity. Respond with ONLY a valid JSON object shaped exactly like {"translated": "...", "note": null}, no markdown fences, no commentary outside the JSON. Set "note" to a short, casual, plain-English explanation (one to two sentences) only when the source message has a phrase, expression, or idea with no direct one-to-one translation in the other language, so the other person can understand what was actually meant or implied. Leave "note" as null whenever a normal direct translation works fine, most messages should have a null note.`;
 
   const instruction = direction === 'toEnglish'
-    ? `Full conversation so far:\n${historyLines || '(this is the first message)'}\n\nNow translate this new message from ${langName()}${dialectPart} into natural, casual English:\n\n"${text}"`
-    : `Full conversation so far:\n${historyLines || '(this is the first message)'}\n\nNow translate this new message from natural, casual English into natural, casual ${langName()}${dialectPart}:\n\n"${text}"`;
+    ? `Conversation so far:\n${historyLines}\n\nTranslate this new message from ${langName()}${dialectPart} into natural, casual English:\n\n${text}`
+    : `Conversation so far:\n${historyLines}\n\nTranslate this new message from casual English into natural, casual ${langName()}${dialectPart}:\n\n${text}`;
 
   // Replace: const raw = await callClaude(system, instruction);
   const raw = await callAI(system, instruction);
