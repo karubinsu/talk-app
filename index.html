@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>Talk — Casual Live Translator</title>
+<title>talkNative — Speak the Local Vibe</title>
 <style>
   :root{
     --bg:#14141f; --bg-soft:#1c1c2c; --card:#232338; --card-hi:#2b2b44;
@@ -53,11 +53,10 @@
   .lang-btn.selected{background:linear-gradient(135deg, rgba(255,139,94,0.18), rgba(242,193,78,0.10));border-color:var(--accent);}
   .lang-native{font-family:var(--serif);font-size:19px;display:block;}
   .lang-eng{font-size:12px;color:var(--text-muted);display:block;margin-top:2px;}
-  .lang-btn.other .lang-native{font-family:var(--sans);font-size:16px;}
   .lang-btn.more-btn{position:relative;padding-right:26px;}
-  .lang-btn.more-btn .lang-native{font-family:var(--sans);font-size:16px;}
   .more-indicator{position:absolute;right:4px;top:50%;transform:translateY(-50%) rotate(-90deg);transform-origin:center;font-size:9px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);opacity:0.75;white-space:nowrap;}
-  .more-modal .modal-card{max-width:360px;max-height:80vh;overflow-y:auto;}
+  .modal-overlay.more-modal{padding:14px;}
+  .more-modal .modal-card{max-width:440px;padding:20px 16px;max-height:80vh;overflow-y:auto;}
   .more-modal .lang-grid{margin-top:4px;}
   .more-modal-title{font-family:var(--serif);font-size:18px;margin:0 0 14px;}
   label.field-label{font-size:13px;color:var(--text-muted);display:block;margin:18px 0 8px;}
@@ -76,10 +75,15 @@
   .turn-btn{flex:1;text-align:center;padding:10px 6px;border-radius:11px;cursor:pointer;font-size:13.5px;color:var(--text-muted);}
   .turn-btn.active{background:var(--card-hi);color:var(--text);font-weight:600;}
   .messages{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:12px;padding:4px 2px 14px;min-height:180px;max-height:340px;}
-  .msg{max-width:86%;padding:11px 14px;border-radius:16px;font-size:14.5px;line-height:1.45;}
+  .msg{max-width:86%;padding:11px 14px;border-radius:16px;font-size:14.5px;line-height:1.45;position:relative;}
   .msg.host{align-self:flex-end;background:linear-gradient(135deg, rgba(255,139,94,0.22), rgba(242,193,78,0.14));border-bottom-right-radius:4px;}
   .msg.guest{align-self:flex-start;background:var(--card);border-bottom-left-radius:4px;}
   .msg .orig{font-size:12px;color:var(--text-muted);margin-top:5px;}
+  .msg.has-tip{cursor:pointer;}
+  .tip-marker{position:absolute;top:-3px;right:-3px;width:9px;height:9px;border-radius:50%;background:linear-gradient(135deg, var(--accent), var(--accent-2));box-shadow:0 0 0 2px var(--bg-soft);}
+  .msg.guest .tip-marker{right:auto;left:-3px;}
+  .msg-tip{max-height:0;opacity:0;overflow:hidden;font-size:12.5px;line-height:1.42;color:var(--text-muted);background:rgba(0,0,0,0.16);border-radius:10px;padding:0 10px;margin-top:0;transition:max-height .25s ease, opacity .2s ease, margin-top .25s ease, padding .25s ease;}
+  .msg-tip.show{max-height:160px;opacity:1;padding:8px 10px;margin-top:8px;}
   .msg.error{border:1px solid rgba(255,120,120,0.45);cursor:pointer;}
   .error-text{font-size:13px;color:#ff9a9a;display:flex;align-items:center;gap:6px;}
   .translating{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-muted);}
@@ -117,7 +121,7 @@ const CLAUDE_MODEL = "claude-sonnet-4-6";
 const HOST_EMAIL = "karlvincev.kvv@gmail.com";
 const HOST_NAME = "Vince";
 const STORAGE_KEY = "talk_app_state_v4";
-const UI_CACHE_PREFIX = "talk_ui_cache_v4_";
+const UI_CACHE_PREFIX = "talk_ui_cache_v5_";
 
 const LANGUAGES = [
   { code:'zh', label:'Chinese (Mandarin)', native:'中文', nonLatin:true, dialects:[
@@ -208,6 +212,7 @@ function keyboardLangTag(){
    Satoori, Thai regional) - worth a native speaker spot check before Friday. */
 const STATIC_UI = {
 en: { base: {
+  appTagline: "Speak the Local Vibe",
   consentTitle: "Hi!",
   consentBody: "I'm building something to help people talk to each other naturally across language barriers. Want to help me test an early version? I'd love to hear what you think afterward.",
   yesBtn: "Yes, let's try it", noBtn: "No thanks",
@@ -235,6 +240,7 @@ en: { base: {
 }, dialects: {} },
 
 tl: { base: {
+  appTagline: "Makipag-usap sa Vibe ng Lokal",
   consentTitle: "Hi!",
   consentBody: "Gumagawa ako ng app na makakatulong sa mga tao na mag-usap nang natural kahit magkaiba ang wika nila. Gusto mo bang tumulong subukan itong unang bersyon? Gustong-gusto kong marinig ang thoughts mo pagkatapos.",
   yesBtn: "Sige, subukan natin", noBtn: "Salamat na lang",
@@ -287,6 +293,7 @@ tl: { base: {
 }},
 
 ja: { base: {
+  appTagline: "その土地のノリで話そう",
   consentTitle: "こんにちは!",
   consentBody: "言葉の壁を越えて自然に話せるようにするアプリを作っています。初期版を一緒に試してもらえますか?後で感想を聞かせてもらえたら嬉しいです。",
   yesBtn: "試してみる", noBtn: "今回はやめておく",
@@ -322,6 +329,7 @@ ja: { base: {
 }},
 
 ko: { base: {
+  appTagline: "그 동네 느낌으로 말해요",
   consentTitle: "안녕하세요!",
   consentBody: "언어 장벽 없이 자연스럽게 대화할 수 있도록 도와주는 앱을 만들고 있어요. 초기 버전을 같이 테스트해볼래요? 나중에 어떻게 생각하는지 들려주면 좋겠어요.",
   yesBtn: "네, 해볼게요", noBtn: "괜찮아요",
@@ -356,6 +364,7 @@ ko: { base: {
 }},
 
 vi: { base: {
+  appTagline: "Nói Đúng Chất Địa Phương",
   consentTitle: "Chào bạn!",
   consentBody: "Mình đang làm một ứng dụng giúp mọi người trò chuyện tự nhiên hơn dù khác ngôn ngữ. Bạn có muốn thử bản đầu tiên với mình không? Sau đó mình rất muốn nghe suy nghĩ của bạn.",
   yesBtn: "Được, thử xem sao", noBtn: "Thôi khỏi",
@@ -394,6 +403,7 @@ vi: { base: {
 }},
 
 zh: { base: {
+  appTagline: "用当地范儿聊天",
   consentTitle: "你好!",
   consentBody: "我在做一个能帮助大家跨越语言障碍自然聊天的应用。想不想帮我试试早期版本?之后我很想听听你的想法。",
   yesBtn: "好啊,试试看", noBtn: "不用了,谢谢",
@@ -444,6 +454,7 @@ zh: { base: {
 }},
 
 th: { base: {
+  appTagline: "พูดแบบคนท้องถิ่น",
   consentTitle: "สวัสดี!",
   consentBody: "กำลังทำแอปที่ช่วยให้คนคุยกันได้อย่างเป็นธรรมชาติแม้พูดคนละภาษา อยากลองเวอร์ชันแรกด้วยกันไหม หลังจากนั้นอยากฟังความคิดเห็นมากๆ เลย",
   yesBtn: "โอเค ลองดู", noBtn: "ขอบคุณ ไม่เป็นไร",
@@ -479,6 +490,7 @@ th: { base: {
 }},
 
 es: { base: {
+  appTagline: "Habla con el Toque Local",
   consentTitle: "¡Hola!",
   consentBody: "Estoy creando algo para ayudar a la gente a hablar de forma natural sin que el idioma sea una barrera. ¿Quieres ayudarme a probar una versión inicial? Me encantaría escuchar qué piensas después.",
   yesBtn: "Sí, vamos a probarlo", noBtn: "No, gracias",
@@ -519,6 +531,7 @@ es: { base: {
    overridden per language below; worth a native speaker spot check before Friday,
    especially for the less common ones. */
 hi: { base: {
+  appTagline: "अपने अंदाज़ में बात करें",
   consentTitle: "नमस्ते!",
   consentBody: "मैं एक ऐसा ऐप बना रहा हूं जो लोगों को भाषा की दीवार के बावजूद स्वाभाविक रूप से बात करने में मदद करे। क्या आप इसका शुरुआती वर्जन आज़मा कर मेरी मदद करना चाहेंगे? बाद में आपकी राय सुनना अच्छा लगेगा।",
   yesBtn: "हां, आज़माते हैं", noBtn: "नहीं, धन्यवाद",
@@ -619,6 +632,7 @@ hi: { base: {
 }},
 
 ms: { base: {
+  appTagline: "Bercakap Ikut Gaya Tempatan",
   consentTitle: "Hai!",
   consentBody: "Saya sedang buat sesuatu untuk bantu orang bercakap secara semula jadi walaupun bahasa berbeza. Nak tolong saya cuba versi awal ni? Saya suka dengar pendapat awak lepas ni.",
   yesBtn: "Baik, jom cuba", noBtn: "Tak apa, terima kasih",
@@ -646,6 +660,7 @@ ms: { base: {
 }, dialects: {} },
 
 my: { base: {
+  appTagline: "ဒေသန္တရ အရသာနဲ့ စကားပြော",
   consentTitle: "မင်္ဂလာပါ!",
   consentBody: "ဘာသာစကားအတားအဆီးရှိပေမယ့် လူတွေ သဘာဝကျကျ စကားပြောနိုင်ဖို့ အက်ပ်တစ်ခု ဖန်တီးနေပါတယ်။ အစောပိုင်း ဗားရှင်းကို စမ်းသပ်ဖို့ ကူညီပေးလိုပါသလား? ပြီးရင် သင့်ရဲ့ အမြင်ကို ကြားချင်ပါတယ်။",
   yesBtn: "ဟုတ်ကဲ့၊ စမ်းကြည့်ရအောင်", noBtn: "မလိုပါဘူး၊ ကျေးဇူးပါ",
@@ -673,6 +688,7 @@ my: { base: {
 }, dialects: {} },
 
 id: { base: {
+  appTagline: "Ngobrol Sesuai Gaya Lokal",
   consentTitle: "Hai!",
   consentBody: "Saya sedang membuat sesuatu untuk membantu orang mengobrol secara alami meski beda bahasa. Mau bantu saya coba versi awalnya? Saya senang dengar pendapat kamu setelahnya.",
   yesBtn: "Ya, ayo coba", noBtn: "Tidak, terima kasih",
@@ -711,6 +727,17 @@ function freshState(){
 }
 let state = freshState();
 let msgIdCounter = 0;
+
+// Transient (not persisted) tracking of which message's "no direct translation"
+// tip is currently expanded, and its auto-dismiss timer.
+let activeTipId = null;
+let tipTimeoutHandle = null;
+function showTip(id){
+  clearTimeout(tipTimeoutHandle);
+  activeTipId = id;
+  render();
+  tipTimeoutHandle = setTimeout(() => { activeTipId = null; render(); }, 5000);
+}
 
 (function restore(){
   try{
@@ -832,14 +859,23 @@ async function translateMessage(text, direction){
     .map(m => `${m.sender === 'host' ? HOST_NAME : 'Guest'}: ${m.translated}`)
     .join('\n');
 
-  const system = `You are a live interpreter helping two people have a casual, natural conversation, not a formal document translator. Translate the way real native speakers actually talk day-to-day, including natural code-switching with English where that's genuinely how bilingual speakers of this language talk, only where it's authentic, don't force it in. Avoid stiff or textbook phrasing. Never use em dashes, use commas, periods, or parentheses instead. Use the conversation history only for tone and context continuity. Respond with ONLY the translated text. No notes, no quotation marks, no explanation.`;
+  const system = `You are a live interpreter helping two people have a casual, natural conversation, not a formal document translator. Translate the way real native speakers actually talk day-to-day, including natural code-switching with English where that's genuinely how bilingual speakers of this language talk, only where it's authentic, don't force it in. Avoid stiff or textbook phrasing. Never use em dashes, use commas, periods, or parentheses instead. Use the conversation history only for tone and context continuity. Respond with ONLY a valid JSON object shaped exactly like {"translated": "...", "note": null}, no markdown fences, no commentary outside the JSON. Set "note" to a short, casual, plain-English explanation (one to two sentences) only when the source message has a phrase, expression, or idea with no direct one-to-one translation in the other language, so the other person can understand what was actually meant or implied. Leave "note" as null whenever a normal direct translation works fine, most messages should have a null note.`;
 
   const instruction = direction === 'toEnglish'
     ? `Conversation so far:\n${historyLines}\n\nTranslate this new message from ${langName()}${dialectPart} into natural, casual English:\n\n${text}`
     : `Conversation so far:\n${historyLines}\n\nTranslate this new message from casual English into natural, casual ${langName()}${dialectPart}:\n\n${text}`;
 
-  // Replace: return await callClaude(system, instruction);
-  return await callAI(system, instruction);
+  // Replace: const raw = await callClaude(system, instruction);
+  const raw = await callAI(system, instruction);
+  const cleaned = raw.replace(/^```json\s*/,'').replace(/```$/,'').trim();
+  try{
+    const parsed = JSON.parse(cleaned);
+    if(parsed && typeof parsed.translated === 'string') return { translated: parsed.translated, note: parsed.note || null };
+    throw new Error('unexpected shape');
+  }catch(e){
+    // Fallback for a non-JSON reply: use it as the translation with no note.
+    return { translated: raw.trim(), note: null };
+  }
 }
 
 /* ============ RENDER HELPERS ============ */
@@ -853,11 +889,12 @@ function markSVG(){
     </defs>
   </svg>`;
 }
-function markHeader(label){
+function markHeader(){
   const showBack = state.history.length > 0 && state.screen !== 'thanks';
   const backHtml = showBack ? `<span class="back-btn" id="backBtn">←</span>` : '';
+  const tagline = (state.ui && state.ui.appTagline) || 'Speak the Local Vibe';
   return `<div class="mark">
-    <div class="mark-left">${backHtml}${markSVG()}<span class="label">${label}</span></div>
+    <div class="mark-left">${backHtml}${markSVG()}<span class="label">talkNative — ${tagline}</span></div>
     <span class="start-over" id="startOverLink">Start over</span>
   </div>`;
 }
@@ -966,19 +1003,19 @@ function renderLanguageScreen(){
     : '';
 
   app.innerHTML = `
-    ${markHeader('talk — live translator')}
+    ${markHeader()}
     <h1>Pick your language</h1>
     <p class="sub">This helps us get the tone and dialect right for you.</p>
     <div class="lang-grid">
       ${items}
-      <div class="lang-btn other" data-code="other">
-        <span class="lang-native">Other</span>
-        <span class="lang-eng">Type it in</span>
-      </div>
       <div class="lang-btn more-btn" id="moreLangBtn">
         <span class="lang-native">${moreBtnNative}</span>
         <span class="lang-eng">${moreBtnEng}</span>
         ${moreSelected ? `<span class="more-indicator">More</span>` : ''}
+      </div>
+      <div class="lang-btn other" data-code="other">
+        <span class="lang-native">Other</span>
+        <span class="lang-eng">Type it in</span>
       </div>
     </div>
     ${state.lang && state.lang.code === 'other' ? `
@@ -1035,13 +1072,13 @@ function canContinueLang(){
 function refreshContinueBtn(){ const btn = document.getElementById('continueBtn'); if(btn) btn.disabled = !canContinueLang(); }
 
 function renderLoading(msg){
-  app.innerHTML = `${markHeader('talk — live translator')}<div class="loading"><div class="pulse"></div><div>${msg}</div></div>`;
+  app.innerHTML = `${markHeader()}<div class="loading"><div class="pulse"></div><div>${msg}</div></div>`;
 }
 
 function renderConsent(){
   const showKeyboardSetupHint = state.lang && state.lang.nonLatin;
   app.innerHTML = `
-    ${markHeader('talk — live translator')}
+    ${markHeader()}
     <div class="screen">
       <h1>${state.ui.consentTitle}</h1>
       <p class="sub">${state.ui.consentBody}</p>
@@ -1057,7 +1094,7 @@ function renderConsent(){
 
 function renderDeclined(){
   app.innerHTML = `
-    ${markHeader('talk — live translator')}
+    ${markHeader()}
     <div class="screen">
       <h1>${state.ui.declineBody}</h1>
       <div class="grow"></div>
@@ -1069,7 +1106,7 @@ function renderDeclined(){
 
 function renderName(){
   app.innerHTML = `
-    ${markHeader('talk — live translator')}
+    ${markHeader()}
     <h1>${state.ui.namePrompt}</h1>
     <input type="text" id="nameInput" placeholder="Name" value="${state.name}">
     <button class="btn btn-primary" id="nameContinueBtn" ${state.name.trim() ? '' : 'disabled'}>${state.ui.nameContinue}</button>
@@ -1097,14 +1134,20 @@ function bubbleHtml(m){
       <div class="orig">${m.original}</div>
     </div>`;
   }
-  return `<div class="msg ${m.sender}"><div>${m.translated}</div><div class="orig">${m.original}</div></div>`;
+  const hasTip = !!m.note;
+  return `<div class="msg ${m.sender}${hasTip ? ' has-tip' : ''}" data-id="${m.id}">
+    <div>${m.translated}</div>
+    <div class="orig">${m.original}</div>
+    ${hasTip ? `<span class="tip-marker"></span><div class="msg-tip${activeTipId===m.id ? ' show' : ''}">💬 ${m.note}</div>` : ''}
+  </div>`;
 }
 
 async function doTranslate(msgId, text, direction){
   try{
-    const translated = await translateMessage(text, direction);
+    const result = await translateMessage(text, direction);
     const m = state.messages.find(x=>x.id===msgId);
-    if(m){ m.translated = translated; m.status = 'done'; }
+    if(m){ m.translated = result.translated; m.note = result.note || null; m.status = 'done'; }
+    if(m && m.note){ showTip(msgId); return; }
   }catch(e){
     const m = state.messages.find(x=>x.id===msgId);
     if(m){ m.status = 'error'; }
@@ -1119,7 +1162,7 @@ function renderChat(){
   const showKbHint = state.turn === 'guest' && state.lang && state.lang.code !== 'other';
 
   app.innerHTML = `
-    ${markHeader('talk — live translator')}
+    ${markHeader()}
     <div class="turn-toggle">
       <div class="turn-btn ${state.turn==='guest'?'active':''}" data-turn="guest">${guestLabel}</div>
       <div class="turn-btn ${state.turn==='host'?'active':''}" data-turn="host">${HOST_NAME}</div>
@@ -1157,6 +1200,10 @@ function renderChat(){
     });
   });
 
+  document.querySelectorAll('.msg.has-tip').forEach(el => {
+    el.addEventListener('click', () => showTip(el.dataset.id));
+  });
+
   const chatInput = document.getElementById('chatInput');
   const sendBtn = document.getElementById('sendBtn');
 
@@ -1183,7 +1230,7 @@ function renderChat(){
 
 function renderFeedback(){
   app.innerHTML = `
-    ${markHeader('talk — live translator')}
+    ${markHeader()}
     <h1>${state.ui.feedbackTitle}</h1>
     <p class="sub">${state.ui.feedbackBody}</p>
     <textarea id="feedbackInput" placeholder="${state.ui.feedbackPlaceholder}"></textarea>
@@ -1213,7 +1260,7 @@ function renderFeedback(){
 function buildEmailContent(){
   const line = '-'.repeat(30);
   const guestLabel = state.name || 'Guest';
-  const header = `TALK conversation summary\n${line}\nTester: ${guestLabel}\nLanguage: ${langName()}${state.dialect ? ' (' + state.dialect + ')' : ''}\n${line}\n`;
+  const header = `talkNative conversation summary\n${line}\nTester: ${guestLabel}\nLanguage: ${langName()}${state.dialect ? ' (' + state.dialect + ')' : ''}\n${line}\n`;
   const convo = state.messages
     .filter(m => m.status === 'done')
     .map(m => {
@@ -1221,7 +1268,7 @@ function buildEmailContent(){
       return `\n${who}\n  ${m.translated}\n  (original: ${m.original})`;
     }).join('\n');
   const feedback = `\n\n${line}\nFeedback from ${guestLabel}\n  ${state.feedbackTranslatedToEnglish || '(pending)'}\n  (original: ${state.feedbackText || '(none)'})\n${line}`;
-  return { subject: `Talk feedback - ${guestLabel} (${langName()})`, body: header + convo + feedback };
+  return { subject: `talkNative feedback - ${guestLabel} (${langName()})`, body: header + convo + feedback };
 }
 
 async function sendFeedbackEmail(){
@@ -1248,7 +1295,7 @@ function renderThanks(){
     : '';
 
   app.innerHTML = `
-    ${markHeader('talk — live translator')}
+    ${markHeader()}
     <div class="screen">
       <div class="thanks-icon">🙏</div>
       <h1>${state.ui.thanksTitle}</h1>
@@ -1293,6 +1340,7 @@ function saveState(){
 }
 function render(){
   saveState();
+  document.title = 'talkNative — ' + ((state.ui && state.ui.appTagline) || 'Speak the Local Vibe');
   switch(state.screen){
     case 'language': renderLanguageScreen(); break;
     case 'loadingConsent': renderLoading('Getting things ready...'); break;
