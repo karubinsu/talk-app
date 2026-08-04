@@ -54,6 +54,12 @@
   .lang-native{font-family:var(--serif);font-size:19px;display:block;}
   .lang-eng{font-size:12px;color:var(--text-muted);display:block;margin-top:2px;}
   .lang-btn.other .lang-native{font-family:var(--sans);font-size:16px;}
+  .lang-btn.more-btn{position:relative;padding-right:26px;}
+  .lang-btn.more-btn .lang-native{font-family:var(--sans);font-size:16px;}
+  .more-indicator{position:absolute;right:4px;top:50%;transform:translateY(-50%) rotate(-90deg);transform-origin:center;font-size:9px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);opacity:0.75;white-space:nowrap;}
+  .more-modal .modal-card{max-width:360px;max-height:80vh;overflow-y:auto;}
+  .more-modal .lang-grid{margin-top:4px;}
+  .more-modal-title{font-family:var(--serif);font-size:18px;margin:0 0 14px;}
   label.field-label{font-size:13px;color:var(--text-muted);display:block;margin:18px 0 8px;}
   select, input[type=text], textarea{width:100%;background:var(--card);border:1px solid var(--border);border-radius:14px;color:var(--text);font-family:var(--sans);font-size:15.5px;padding:14px;outline:none;}
   select:focus, input:focus, textarea:focus{border-color:var(--accent);}
@@ -80,9 +86,13 @@
   .dot{width:5px;height:5px;border-radius:50%;background:var(--text-muted);animation:blink 1.2s infinite;}
   .dot:nth-child(2){animation-delay:.2s;} .dot:nth-child(3){animation-delay:.4s;}
   @keyframes blink{0%,80%,100%{opacity:.2;}40%{opacity:1;}}
-  .chat-input-row{display:flex;gap:8px;margin-top:auto;}
-  .chat-input-row textarea{min-height:46px;max-height:100px;}
-  .send-btn{background:linear-gradient(135deg, var(--accent), var(--accent-2));border:none;border-radius:14px;width:52px;flex-shrink:0;cursor:pointer;}
+  .chat-input-wrap{position:relative;margin-top:auto;}
+  .chat-input-wrap textarea{min-height:50px;max-height:110px;padding-right:52px;}
+  .send-btn{position:absolute;right:6px;bottom:6px;background:var(--accent);border:none;border-radius:50%;width:36px;height:36px;flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;}
+  .send-btn svg{width:19px;height:19px;}
+  .send-btn:disabled{opacity:0.5;cursor:not-allowed;}
+  .dev-hint{font-size:11.5px;color:var(--text-muted);margin:8px 2px 0;line-height:1.4;text-align:center;}
+  .keyboard-setup-banner{display:flex;align-items:flex-start;gap:7px;font-size:12.5px;color:var(--text-muted);background:var(--card);border:1px solid var(--border);border-radius:12px;padding:10px 12px;margin:12px 0 0;line-height:1.4;}
   .end-link{text-align:center;font-size:13px;color:var(--text-muted);margin-top:14px;cursor:pointer;text-decoration:underline;}
   .thanks-icon{font-size:38px;margin-bottom:6px;}
   .feature-list{margin:4px 0 14px;padding-left:20px;}
@@ -110,18 +120,18 @@ const STORAGE_KEY = "talk_app_state_v4";
 const UI_CACHE_PREFIX = "talk_ui_cache_v4_";
 
 const LANGUAGES = [
-  { code:'zh', label:'Chinese (Mandarin)', native:'中文', dialects:[
+  { code:'zh', label:'Chinese (Mandarin)', native:'中文', nonLatin:true, dialects:[
       {en:'Standard / Mainland', native:'普通话（标准/大陆）'},
       {en:'Taiwanese Mandarin', native:'台湾国语'},
       {en:'Singaporean Mandarin', native:'新加坡华语'},
       {en:'Cantonese', native:'广东话 / 粤语'},
   ]},
-  { code:'ja', label:'Japanese', native:'日本語', dialects:[
+  { code:'ja', label:'Japanese', native:'日本語', nonLatin:true, dialects:[
       {en:'Standard (Tokyo)', native:'標準語（東京弁）'},
       {en:'Kansai', native:'関西弁'},
       {en:'Other regional', native:'その他の方言'},
   ]},
-  { code:'ko', label:'Korean', native:'한국어', dialects:[
+  { code:'ko', label:'Korean', native:'한국어', nonLatin:true, dialects:[
       {en:'Standard (Seoul)', native:'표준어 (서울말)'},
       {en:'Regional (Satoori)', native:'사투리'},
   ]},
@@ -135,28 +145,58 @@ const LANGUAGES = [
       {en:'Cebuano', native:'Sebwano / Bisaya'},
       {en:'Ilocano', native:'Ilokano'},
   ]},
-  { code:'th', label:'Thai', native:'ภาษาไทย', dialects:[
+  { code:'th', label:'Thai', native:'ภาษาไทย', nonLatin:true, dialects:[
       {en:'Central (Standard)', native:'ภาษาไทยกลาง (มาตรฐาน)'},
       {en:'Northern (Lanna)', native:'ภาษาไทยเหนือ (คำเมือง)'},
       {en:'Isan (Northeastern)', native:'ภาษาอีสาน'},
       {en:'Southern', native:'ภาษาไทยใต้'},
   ]},
+];
+
+// Languages tucked behind the "More languages" popup on the home screen,
+// so the main grid doesn't get too long. Same shape as LANGUAGES.
+const MORE_LANGUAGES = [
   { code:'es', label:'Spanish', native:'Español', dialects:[
       {en:'Standard / Latin American', native:'Español latinoamericano (estándar)'},
       {en:'Spain (Castilian)', native:'Español de España'},
   ]},
+  { code:'hi', label:'Hindi / Indian Languages', native:'हिन्दी', nonLatin:true, dialects:[
+      {en:'Standard Hindi', native:'हिन्दी (मानक)'},
+      {en:'Punjabi', native:'ਪੰਜਾਬੀ'},
+      {en:'Bengali', native:'বাংলা'},
+      {en:'Tamil', native:'தமிழ்'},
+      {en:'Telugu', native:'తెలుగు'},
+      {en:'Marathi', native:'मराठी'},
+      {en:'Gujarati', native:'ગુજરાતી'},
+  ]},
+  { code:'ms', label:'Malay', native:'Bahasa Melayu', dialects:[
+      {en:'Standard Malaysian', native:'Bahasa Melayu Standard'},
+  ]},
+  { code:'my', label:'Burmese', native:'မြန်မာဘာသာ', nonLatin:true, dialects:[
+      {en:'Standard (Yangon)', native:'ရန်ကုန်စကား (စံဘာသာ)'},
+  ]},
+  { code:'id', label:'Indonesian', native:'Bahasa Indonesia', dialects:[
+      {en:'Standard Indonesian', native:'Bahasa Indonesia Baku'},
+  ]},
 ];
+const ALL_LANGUAGES = LANGUAGES.concat(MORE_LANGUAGES);
+function isMoreLanguage(code){ return MORE_LANGUAGES.some(l => l.code === code); }
+function findAnyLanguage(code){ return ALL_LANGUAGES.find(l => l.code === code); }
 
 // Best-effort hint only. iOS/Android web pages cannot force-switch the visible
 // keyboard layout the way native apps (like Duolingo) do via native APIs, this
 // is a real web-platform limitation, not a bug in this app. The lang attribute
 // mainly helps autocorrect/spellcheck pick the right dictionary, not the layout.
-const KEYBOARD_LANG_TAG = { ja:'ja', ko:'ko', vi:'vi', tl:'fil', th:'th', es:'es' };
+const KEYBOARD_LANG_TAG = { ja:'ja', ko:'ko', vi:'vi', tl:'fil', th:'th', es:'es', ms:'ms', my:'my', id:'id' };
+const HI_DIALECT_TAG = { 'Punjabi':'pa', 'Bengali':'bn', 'Tamil':'ta', 'Telugu':'te', 'Marathi':'mr', 'Gujarati':'gu' };
 function keyboardLangTag(){
   if(!state.lang || state.lang.code === 'other') return '';
   if(state.lang.code === 'zh'){
     const d = state.dialect || '';
     return (d.includes('Taiwanese') || d.includes('Cantonese')) ? 'zh-Hant' : 'zh-Hans';
+  }
+  if(state.lang.code === 'hi'){
+    return HI_DIALECT_TAG[state.dialect] || 'hi';
   }
   return KEYBOARD_LANG_TAG[state.lang.code] || '';
 }
@@ -176,6 +216,8 @@ en: { base: {
   inputPlaceholderGuest: "Type in your language...", sendBtn: "Send", endBtn: "End conversation",
   dialectHint: "This helps the translation match how people actually speak where you're from. It's already set to standard, only change it if a specific dialect fits you better.",
   keyboardHint: "Tip: tap the \ud83c\udf10 globe on your keyboard to switch",
+  keyboardSetupHint: "If this device's keyboard doesn't already type your language, it's worth asking your host to help set it up before you start.",
+  devHint: "This app is still a work in progress and might not always behave perfectly. If you notice anything off, feel free to mention it in the feedback after this conversation.",
   feedbackTitle: "How was that?",
   feedbackBody: "Did the translation feel natural? Do you think something like this could actually be useful? Any thoughts are welcome, good or bad.",
   feedbackPlaceholder: "Share your thoughts...", feedbackSubmit: "Send feedback",
@@ -201,6 +243,8 @@ tl: { base: {
   inputPlaceholderGuest: "I-type dito sa wika mo...", sendBtn: "Ipadala", endBtn: "Tapusin ang usapan",
   dialectHint: "Makakatulong ito para tumugma ang translation sa paraan ng pagsasalita sa lugar mo. Naka-set na ito sa standard, palitan mo lang kung mas bagay ang ibang dialect sa'yo.",
   keyboardHint: "Tip: pindutin ang \ud83c\udf10 sa keyboard mo para lumipat",
+  keyboardSetupHint: "Kung hindi pa naka-set up itong keyboard ng device para sa wika mo, pwede mo hingin tulong sa host para i-set up bago ka magsimula.",
+  devHint: "Nasa development pa itong app kaya baka may mga pagkakataon na hindi ito gumana nang maayos. Kung may napansin kang kakaiba, i-share mo na lang sa feedback pagkatapos ng usapan.",
   feedbackTitle: "Kumusta yun?",
   feedbackBody: "Natural ba yung translation? Sa tingin mo ba magiging useful talaga ito? Lahat ng thoughts okay lang, good or bad.",
   feedbackPlaceholder: "I-share yung thoughts mo...", feedbackSubmit: "Ipadala ang feedback",
@@ -251,6 +295,8 @@ ja: { base: {
   inputPlaceholderGuest: "自分の言葉で入力してください...", sendBtn: "送信", endBtn: "会話を終える",
   dialectHint: "これは、あなたの出身地の話し方に翻訳を合わせるのに役立ちます。すでに標準に設定されていますが、他の方言の方が合う場合は変更してください。",
   keyboardHint: "ヒント: キーボードの\ud83c\udf10をタップして切り替え",
+  keyboardSetupHint: "この端末のキーボードでまだ日本語が入力できない場合は、始める前にホストに設定を手伝ってもらうと安心です。",
+  devHint: "このアプリはまだ開発中なので、うまく動かないこともあるかもしれません。何か気になる点があれば、会話の後のフィードバックで教えてください。",
   feedbackTitle: "どうでしたか?",
   feedbackBody: "翻訳は自然に感じましたか?こういうのって実際に役立つと思いますか?良い意見も悪い意見も歓迎です。",
   feedbackPlaceholder: "感想をどうぞ...", feedbackSubmit: "フィードバックを送る",
@@ -284,6 +330,8 @@ ko: { base: {
   inputPlaceholderGuest: "본인 언어로 입력하세요...", sendBtn: "보내기", endBtn: "대화 종료",
   dialectHint: "이건 번역이 당신이 사는 지역에서 실제로 말하는 방식과 맞도록 도와줘요. 이미 표준으로 설정되어 있고, 다른 사투리가 더 잘 맞으면 바꾸면 돼요.",
   keyboardHint: "팁: 키보드의 \ud83c\udf10를 눌러서 전환하세요",
+  keyboardSetupHint: "이 기기 키보드에 아직 한국어가 없다면, 시작하기 전에 호스트에게 설정을 도와달라고 하는 게 좋아요.",
+  devHint: "이 앱은 아직 개발 중이라 가끔 제대로 작동하지 않을 수도 있어요. 이상한 점이 있으면 대화가 끝난 후 피드백에서 알려주세요.",
   feedbackTitle: "어땠어요?",
   feedbackBody: "번역이 자연스러웠나요? 이런 게 실제로 유용할 것 같아요? 좋은 의견이든 안 좋은 의견이든 다 환영이에요.",
   feedbackPlaceholder: "생각을 남겨주세요...", feedbackSubmit: "피드백 보내기",
@@ -316,6 +364,8 @@ vi: { base: {
   inputPlaceholderGuest: "Gõ bằng ngôn ngữ của bạn...", sendBtn: "Gửi", endBtn: "Kết thúc trò chuyện",
   dialectHint: "Điều này giúp bản dịch khớp với cách mọi người thực sự nói ở nơi bạn sống. Đã được đặt sẵn là giọng chuẩn, chỉ cần đổi nếu một giọng vùng miền khác hợp với bạn hơn.",
   keyboardHint: "Mẹo: chạm vào biểu tượng \ud83c\udf10 trên bàn phím để chuyển",
+  keyboardSetupHint: "Nếu bàn phím trên máy này chưa gõ được tiếng Việt, bạn nên nhờ chủ nhà giúp cài đặt trước khi bắt đầu.",
+  devHint: "Ứng dụng này vẫn đang trong quá trình phát triển nên đôi khi có thể chưa hoạt động như mong đợi. Nếu thấy gì đó chưa ổn, bạn cứ chia sẻ trong phần phản hồi sau khi trò chuyện xong nhé.",
   feedbackTitle: "Thấy sao rồi?",
   feedbackBody: "Bản dịch có tự nhiên không? Bạn nghĩ cái này có thực sự hữu ích không? Ý kiến gì cũng được, khen hay chê đều okay.",
   feedbackPlaceholder: "Chia sẻ suy nghĩ của bạn...", feedbackSubmit: "Gửi phản hồi",
@@ -352,6 +402,8 @@ zh: { base: {
   inputPlaceholderGuest: "用你的语言输入...", sendBtn: "发送", endBtn: "结束对话",
   dialectHint: "这可以帮助翻译更符合你所在地方人们实际说话的方式。已经默认设成标准,只有在某个方言更适合你时才需要更改。",
   keyboardHint: "提示:点击键盘上的\ud83c\udf10即可切换",
+  keyboardSetupHint: "如果这台设备的键盘还没有设置成可以打中文,建议开始前请主人帮忙设置一下。",
+  devHint: "这个应用还在开发中,可能偶尔会不太顺畅。如果发现什么问题,欢迎在对话结束后的反馈里告诉我。",
   feedbackTitle: "感觉怎么样?",
   feedbackBody: "翻译听起来自然吗?你觉得这种东西真的有用吗?什么想法都欢迎,好的坏的都可以。",
   feedbackPlaceholder: "分享你的想法...", feedbackSubmit: "发送反馈",
@@ -400,6 +452,8 @@ th: { base: {
   inputPlaceholderGuest: "พิมพ์เป็นภาษาของคุณ...", sendBtn: "ส่ง", endBtn: "จบบทสนทนา",
   dialectHint: "สิ่งนี้ช่วยให้คำแปลตรงกับวิธีที่คนในพื้นที่ของคุณพูดจริงๆ ตอนนี้ตั้งเป็นมาตรฐานไว้แล้ว เปลี่ยนได้ถ้าสำเนียงอื่นเหมาะกับคุณมากกว่า",
   keyboardHint: "เคล็ดลับ: แตะ \ud83c\udf10 บนคีย์บอร์ดเพื่อสลับภาษา",
+  keyboardSetupHint: "ถ้าคีย์บอร์ดเครื่องนี้ยังพิมพ์ภาษาไทยไม่ได้ ลองขอให้เจ้าของงานช่วยตั้งค่าให้ก่อนเริ่มนะ",
+  devHint: "แอปนี้ยังอยู่ระหว่างพัฒนา อาจมีบางจุดที่ทำงานไม่สมบูรณ์แบบ ถ้าเจออะไรแปลกๆ บอกได้เลยในช่องความคิดเห็นหลังจบบทสนทนา",
   feedbackTitle: "เป็นยังไงบ้าง?",
   feedbackBody: "คำแปลฟังดูเป็นธรรมชาติไหม คิดว่าแอปแบบนี้มีประโยชน์จริงไหม ความเห็นแบบไหนก็ยินดีรับฟังหมด",
   feedbackPlaceholder: "แชร์ความคิดเห็น...", feedbackSubmit: "ส่งความคิดเห็น",
@@ -433,6 +487,8 @@ es: { base: {
   inputPlaceholderGuest: "Escribe en tu idioma...", sendBtn: "Enviar", endBtn: "Terminar la conversación",
   dialectHint: "Esto ayuda a que la traducción se ajuste a cómo habla realmente la gente de tu región. Ya está puesto en estándar, cámbialo solo si un dialecto específico te queda mejor.",
   keyboardHint: "Consejo: toca el \ud83c\udf10 en tu teclado para cambiar",
+  keyboardSetupHint: "Si el teclado de este dispositivo no está configurado para tu idioma, es buena idea pedirle al anfitrión que te ayude a configurarlo antes de empezar.",
+  devHint: "Esta app todavía está en desarrollo y puede que a veces no funcione perfectamente. Si notas algo raro, puedes mencionarlo en los comentarios después de esta conversación.",
   feedbackTitle: "¿Qué te pareció?",
   feedbackBody: "¿La traducción se sintió natural? ¿Crees que esto realmente podría ser útil? Cualquier opinión es bienvenida, buena o mala.",
   feedbackPlaceholder: "Comparte lo que piensas...", feedbackSubmit: "Enviar comentarios",
@@ -454,14 +510,201 @@ es: { base: {
     namePrompt: "¿Cómo te llamas?",
     feedbackTitle: "¿Qué tal ha ido?"
   }
-}}
+}},
+
+/* Indian languages: "Standard Hindi" is the base/canonical translation. The other
+   dialect entries (Punjabi, Bengali, Tamil, Telugu, Marathi, Gujarati) are really
+   distinct languages, not accents of Hindi, we're grouping them here the same way
+   this file already groups Cebuano/Ilocano under Tagalog. Only core keys are
+   overridden per language below; worth a native speaker spot check before Friday,
+   especially for the less common ones. */
+hi: { base: {
+  consentTitle: "नमस्ते!",
+  consentBody: "मैं एक ऐसा ऐप बना रहा हूं जो लोगों को भाषा की दीवार के बावजूद स्वाभाविक रूप से बात करने में मदद करे। क्या आप इसका शुरुआती वर्जन आज़मा कर मेरी मदद करना चाहेंगे? बाद में आपकी राय सुनना अच्छा लगेगा।",
+  yesBtn: "हां, आज़माते हैं", noBtn: "नहीं, धन्यवाद",
+  declineBody: "कोई बात नहीं, सोचने के लिए धन्यवाद! आपकी शाम अच्छी रहे।",
+  namePrompt: "आपका नाम क्या है?", nameContinue: "बातचीत शुरू करें",
+  inputPlaceholderGuest: "अपनी भाषा में लिखें...", sendBtn: "भेजें", endBtn: "बातचीत खत्म करें",
+  dialectHint: "इससे अनुवाद आपके इलाके में लोग जैसे बोलते हैं, वैसा लगेगा। यह पहले से मानक पर सेट है, केवल तभी बदलें जब कोई और भाषा/बोली आपके लिए बेहतर हो।",
+  keyboardHint: "टिप: बदलने के लिए कीबोर्ड पर \ud83c\udf10 दबाएं",
+  keyboardSetupHint: "अगर इस डिवाइस के कीबोर्ड में अभी आपकी भाषा टाइप करने का विकल्प नहीं है, तो शुरू करने से पहले होस्ट से मदद मांग लेना अच्छा रहेगा।",
+  devHint: "यह ऐप अभी बन ही रहा है, इसलिए हो सकता है कभी-कभी ठीक से काम न करे। अगर कुछ अजीब लगे, तो बातचीत खत्म होने के बाद फीडबैक में बता दें।",
+  feedbackTitle: "कैसा लगा?",
+  feedbackBody: "क्या अनुवाद स्वाभाविक लगा? क्या लगता है ऐसी चीज़ सच में काम की हो सकती है? अच्छी या बुरी, कोई भी राय बताएं।",
+  feedbackPlaceholder: "अपनी राय लिखें...", feedbackSubmit: "फीडबैक भेजें",
+  translatingLabel: "अनुवाद हो रहा है...", retryLabel: "फिर से कोशिश करने के लिए दबाएं",
+  thanksTitle: "धन्यवाद!",
+  thanksIntro: "इसे आज़माने और अपनी राय बताने के लिए सच में धन्यवाद। उम्मीद है इससे ऐसे इवेंट्स में लोगों से जुड़ना आसान होगा, खासकर जब अंग्रेज़ी एक दीवार जैसी लगे। यह अभी बस शुरुआती टेस्ट है, आगे इसमें ये जोड़ने की सोच रहा हूं:",
+  thanksFeatures: [
+    "जिन लोगों से बात हुई उन्हें याद रखना, ताकि अगर ऐसे किसी इवेंट में दोबारा मिलें तो जल्दी याद आ जाए कि वे कौन हैं और पहले क्या बात हुई थी",
+    "अलग-अलग टोन के विकल्प, जैसे दोस्तों के साथ कैज़ुअल और नए मिले किसी व्यक्ति के साथ थोड़ा औपचारिक, ताकि हर बातचीत एक जैसी न लगे",
+    "फोन को हाथ में देने के बजाय अपने-अपने फोन से बात कर पाना, साथ ही टाइप करने की बजाय सिर्फ बोलने का विकल्प भी"
+  ],
+  thanksClosing: "अगर आप कभी इस बारे में या किसी और बात पर संपर्क करना चाहें, तो मुझे सच में अच्छा लगेगा। और बाद में कुछ और सोचें तो वह भी बताने में हिचकिचाएं नहीं।",
+  preparingNote: "आपका फीडबैक तैयार किया जा रहा है...",
+  finishBtn: "हो गया", sentLabel: "धन्यवाद!", sendingLabel: "भेजा जा रहा है...", redirectingLabel: "{n} सेकंड में शुरुआत पर वापस जा रहे हैं..."
+}, dialects: {
+  "Punjabi": {
+    consentTitle: "ਸਤ ਸ੍ਰੀ ਅਕਾਲ!",
+    consentBody: "ਮੈਂ ਇੱਕ ਐਪ ਬਣਾ ਰਿਹਾ ਹਾਂ ਜੋ ਲੋਕਾਂ ਨੂੰ ਭਾਸ਼ਾ ਦੀ ਰੁਕਾਵਟ ਦੇ ਬਾਵਜੂਦ ਸੁਭਾਵਿਕ ਤਰੀਕੇ ਨਾਲ ਗੱਲ ਕਰਨ ਵਿੱਚ ਮਦਦ ਕਰੇ। ਕੀ ਤੁਸੀਂ ਇਸਦਾ ਸ਼ੁਰੂਆਤੀ ਵਰਜਨ ਅਜ਼ਮਾਉਣ ਵਿੱਚ ਮੇਰੀ ਮਦਦ ਕਰੋਗੇ?",
+    yesBtn: "ਹਾਂ, ਅਜ਼ਮਾਉਂਦੇ ਹਾਂ", noBtn: "ਨਹੀਂ, ਧੰਨਵਾਦ",
+    declineBody: "ਕੋਈ ਗੱਲ ਨਹੀਂ, ਸੋਚਣ ਲਈ ਧੰਨਵਾਦ! ਤੁਹਾਡੀ ਸ਼ਾਮ ਵਧੀਆ ਰਹੇ।",
+    namePrompt: "ਤੁਹਾਡਾ ਨਾਮ ਕੀ ਹੈ?", nameContinue: "ਗੱਲਬਾਤ ਸ਼ੁਰੂ ਕਰੋ",
+    inputPlaceholderGuest: "ਆਪਣੀ ਭਾਸ਼ਾ ਵਿੱਚ ਲਿਖੋ...", sendBtn: "ਭੇਜੋ", endBtn: "ਗੱਲਬਾਤ ਖਤਮ ਕਰੋ",
+    feedbackTitle: "ਕਿਵੇਂ ਲੱਗਿਆ?",
+    feedbackBody: "ਕੀ ਅਨੁਵਾਦ ਸੁਭਾਵਿਕ ਲੱਗਿਆ? ਕੀ ਲੱਗਦਾ ਹੈ ਇਹ ਸੱਚੀਂ ਕੰਮ ਦਾ ਹੋ ਸਕਦਾ? ਚੰਗੀ ਜਾਂ ਮਾੜੀ, ਕੋਈ ਵੀ ਰਾਏ ਦੱਸੋ।",
+    feedbackPlaceholder: "ਆਪਣੀ ਰਾਏ ਲਿਖੋ...", feedbackSubmit: "ਫੀਡਬੈਕ ਭੇਜੋ",
+    thanksTitle: "ਧੰਨਵਾਦ!"
+  },
+  "Bengali": {
+    consentTitle: "নমস্কার!",
+    consentBody: "আমি এমন একটা অ্যাপ বানাচ্ছি যা মানুষকে ভাষার বাধা সত্ত্বেও স্বাভাবিকভাবে কথা বলতে সাহায্য করবে। আপনি কি এর শুরুর ভার্সনটা চেষ্টা করে আমাকে সাহায্য করতে চান?",
+    yesBtn: "হ্যাঁ, চেষ্টা করি", noBtn: "না, ধন্যবাদ",
+    declineBody: "কোনো ব্যাপার না, ভেবে দেখার জন্য ধন্যবাদ! আপনার সন্ধ্যা ভালো কাটুক।",
+    namePrompt: "আপনার নাম কী?", nameContinue: "কথোপকথন শুরু করুন",
+    inputPlaceholderGuest: "আপনার ভাষায় লিখুন...", sendBtn: "পাঠান", endBtn: "কথোপকথন শেষ করুন",
+    feedbackTitle: "কেমন লাগলো?",
+    feedbackBody: "অনুবাদ কি স্বাভাবিক লাগলো? মনে হয় কি এমন কিছু সত্যিই কাজে লাগতে পারে? ভালো বা মন্দ, যেকোনো মতামত জানাতে পারেন।",
+    feedbackPlaceholder: "আপনার মতামত লিখুন...", feedbackSubmit: "মতামত পাঠান",
+    thanksTitle: "ধন্যবাদ!"
+  },
+  "Tamil": {
+    consentTitle: "வணக்கம்!",
+    consentBody: "மொழி தடையை மீறி மக்கள் இயல்பாக பேச உதவும் ஆப் ஒன்றை உருவாக்கி வருகிறேன். இதன் ஆரம்ப பதிப்பை முயற்சி செய்ய எனக்கு உதவ விரும்புகிறீர்களா?",
+    yesBtn: "சரி, முயற்சிப்போம்", noBtn: "வேண்டாம், நன்றி",
+    declineBody: "பரவாயில்லை, யோசித்ததற்கு நன்றி! உங்கள் மாலை நேரம் நன்றாக இருக்கட்டும்.",
+    namePrompt: "உங்கள் பெயர் என்ன?", nameContinue: "உரையாடலைத் தொடங்குங்கள்",
+    inputPlaceholderGuest: "உங்கள் மொழியில் தட்டச்சு செய்யுங்கள்...", sendBtn: "அனுப்பு", endBtn: "உரையாடலை முடி",
+    feedbackTitle: "எப்படி இருந்தது?",
+    feedbackBody: "மொழிபெயர்ப்பு இயல்பாக இருந்ததா? இது உண்மையில் பயனுள்ளதாக இருக்கும் என நினைக்கிறீர்களா? நல்லது கெட்டது எதுவானாலும் சொல்லலாம்.",
+    feedbackPlaceholder: "உங்கள் கருத்தைப் பகிரவும்...", feedbackSubmit: "கருத்தை அனுப்பு",
+    thanksTitle: "நன்றி!"
+  },
+  "Telugu": {
+    consentTitle: "నమస్కారం!",
+    consentBody: "భాష అడ్డంకిగా ఉన్నా ప్రజలు సహజంగా మాట్లాడుకోవడానికి సహాయపడే యాప్ ఒకటి తయారు చేస్తున్నాను. దీని తొలి వెర్షన్ ప్రయత్నించడంలో నాకు సాయం చేస్తారా?",
+    yesBtn: "సరే, ప్రయత్నిద్దాం", noBtn: "వద్దు, ధన్యవాదాలు",
+    declineBody: "పర్వాలేదు, ఆలోచించినందుకు ధన్యవాదాలు! మీ సాయంత్రం బాగుండాలి.",
+    namePrompt: "మీ పేరు ఏమిటి?", nameContinue: "సంభాషణ ప్రారంభించండి",
+    inputPlaceholderGuest: "మీ భాషలో టైప్ చేయండి...", sendBtn: "పంపు", endBtn: "సంభాషణ ముగించు",
+    feedbackTitle: "ఎలా అనిపించింది?",
+    feedbackBody: "అనువాదం సహజంగా అనిపించిందా? ఇది నిజంగా ఉపయోగపడుతుందని అనిపిస్తుందా? మంచైనా చెడైనా ఏ అభిప్రాయమైనా చెప్పండి.",
+    feedbackPlaceholder: "మీ అభిప్రాయం పంచుకోండి...", feedbackSubmit: "అభిప్రాయం పంపండి",
+    thanksTitle: "ధన్యవాదాలు!"
+  },
+  "Marathi": {
+    consentTitle: "नमस्कार!",
+    consentBody: "भाषेचा अडथळा असूनही लोकांना नैसर्गिकपणे बोलता यावं यासाठी मी एक अ‍ॅप बनवत आहे. याची सुरुवातीची आवृत्ती वापरून बघायला मला मदत कराल का?",
+    yesBtn: "हो, बघूया", noBtn: "नको, धन्यवाद",
+    declineBody: "काही हरकत नाही, विचार केल्याबद्दल धन्यवाद! तुमची संध्याकाळ छान जावो.",
+    namePrompt: "तुमचं नाव काय आहे?", nameContinue: "संभाषण सुरू करा",
+    inputPlaceholderGuest: "तुमच्या भाषेत टाइप करा...", sendBtn: "पाठवा", endBtn: "संभाषण संपवा",
+    feedbackTitle: "कसं वाटलं?",
+    feedbackBody: "भाषांतर नैसर्गिक वाटलं का? असं काही खरंच उपयोगी वाटतं का? चांगलं किंवा वाईट, कोणतंही मत सांगा.",
+    feedbackPlaceholder: "तुमचं मत लिहा...", feedbackSubmit: "फीडबॅक पाठवा",
+    thanksTitle: "धन्यवाद!"
+  },
+  "Gujarati": {
+    consentTitle: "નમસ્તે!",
+    consentBody: "ભાષાની દીવાલ છતાં લોકો સ્વાભાવિક રીતે વાત કરી શકે એ માટે હું એક એપ બનાવી રહ્યો છું. શું તમે એની શરૂઆતની આવૃત્તિ અજમાવવામાં મને મદદ કરશો?",
+    yesBtn: "હા, અજમાવીએ", noBtn: "ના, આભાર",
+    declineBody: "કંઈ વાંધો નહીં, વિચારવા બદલ આભાર! તમારી સાંજ સારી રહે.",
+    namePrompt: "તમારું નામ શું છે?", nameContinue: "વાતચીત શરૂ કરો",
+    inputPlaceholderGuest: "તમારી ભાષામાં ટાઈપ કરો...", sendBtn: "મોકલો", endBtn: "વાતચીત સમાપ્ત કરો",
+    feedbackTitle: "કેવું લાગ્યું?",
+    feedbackBody: "અનુવાદ સ્વાભાવિક લાગ્યો? શું લાગે છે આ ખરેખર ઉપયોગી થઈ શકે? સારો કે ખરાબ, કોઈપણ અભિપ્રાય જણાવો.",
+    feedbackPlaceholder: "તમારો અભિપ્રાય લખો...", feedbackSubmit: "અભિપ્રાય મોકલો",
+    thanksTitle: "આભાર!"
+  }
+}},
+
+ms: { base: {
+  consentTitle: "Hai!",
+  consentBody: "Saya sedang buat sesuatu untuk bantu orang bercakap secara semula jadi walaupun bahasa berbeza. Nak tolong saya cuba versi awal ni? Saya suka dengar pendapat awak lepas ni.",
+  yesBtn: "Baik, jom cuba", noBtn: "Tak apa, terima kasih",
+  declineBody: "Tak apa langsung, terima kasih sebab pertimbangkan! Semoga malam awak menyeronokkan.",
+  namePrompt: "Siapa nama awak?", nameContinue: "Mulakan perbualan",
+  inputPlaceholderGuest: "Taip dalam bahasa awak...", sendBtn: "Hantar", endBtn: "Tamatkan perbualan",
+  dialectHint: "Ini membantu terjemahan sepadan dengan cara orang bercakap di tempat awak. Sudah ditetapkan kepada standard, tukar hanya jika ada gaya lain yang lebih sesuai untuk awak.",
+  keyboardHint: "Tip: ketik \ud83c\udf10 pada papan kekunci untuk tukar",
+  keyboardSetupHint: "Kalau papan kekunci peranti ini belum boleh taip bahasa awak, elok minta tuan rumah bantu setkan dulu sebelum mula.",
+  devHint: "Apl ini masih dalam pembangunan dan mungkin kadang-kadang tidak berfungsi seperti dijangka. Kalau perasan apa-apa yang pelik, boleh sebut dalam maklum balas selepas perbualan ini.",
+  feedbackTitle: "Macam mana rasanya?",
+  feedbackBody: "Terjemahan tu terasa semula jadi tak? Rasa ada guna tak benda macam ni? Apa-apa pendapat pun dialu-alukan, baik atau buruk.",
+  feedbackPlaceholder: "Kongsi pendapat awak...", feedbackSubmit: "Hantar maklum balas",
+  translatingLabel: "Sedang terjemah...", retryLabel: "Ketik untuk cuba lagi",
+  thanksTitle: "Terima kasih!",
+  thanksIntro: "Betul-betul hargai awak sudi cuba dan kongsi pendapat. Harap ini boleh permudahkan orang berhubung di acara macam ni, terutamanya bila Bahasa Inggeris jadi halangan. Ini baru ujian awal, ini antara benda yang saya harap boleh tambah nanti:",
+  thanksFeatures: [
+    "Ingat orang yang awak pernah berbual dengannya, supaya kalau jumpa lagi di acara macam ni, boleh dapat ringkasan pantas siapa mereka dan apa yang dibincangkan dulu",
+    "Pilihan nada berbeza, seperti bertukar antara santai dengan kawan atau lebih formal bila baru kenal seseorang, supaya perbualan tak terdengar sama je",
+    "Bercakap melalui telefon masing-masing tanpa perlu berikan telefon bergilir-gilir, termasuk pilihan untuk bercakap je berbanding menaip"
+  ],
+  thanksClosing: "Kalau awak nak hubungi saya pasal ni, atau apa-apa je, saya memang suka dengar dari awak. Kalau ada idea lain lepas ni, saya sentiasa sedia dengar.",
+  preparingNote: "Sedang siapkan maklum balas awak...",
+  finishBtn: "Selesai", sentLabel: "Terima kasih!", sendingLabel: "Sedang hantar...", redirectingLabel: "Kembali ke permulaan dalam {n} saat..."
+}, dialects: {} },
+
+my: { base: {
+  consentTitle: "မင်္ဂလာပါ!",
+  consentBody: "ဘာသာစကားအတားအဆီးရှိပေမယ့် လူတွေ သဘာဝကျကျ စကားပြောနိုင်ဖို့ အက်ပ်တစ်ခု ဖန်တီးနေပါတယ်။ အစောပိုင်း ဗားရှင်းကို စမ်းသပ်ဖို့ ကူညီပေးလိုပါသလား? ပြီးရင် သင့်ရဲ့ အမြင်ကို ကြားချင်ပါတယ်။",
+  yesBtn: "ဟုတ်ကဲ့၊ စမ်းကြည့်ရအောင်", noBtn: "မလိုပါဘူး၊ ကျေးဇူးပါ",
+  declineBody: "ပြဿနာမရှိပါဘူး၊ စဉ်းစားပေးလို့ ကျေးဇူးတင်ပါတယ်! ညနေခင်း ကောင်းပါစေ။",
+  namePrompt: "သင့်နာမည် ဘယ်လိုခေါ်လဲ?", nameContinue: "စကားစမြည်ပြောစတင်ရန်",
+  inputPlaceholderGuest: "သင့်ဘာသာစကားနဲ့ ရိုက်ထည့်ပါ...", sendBtn: "ပို့ရန်", endBtn: "စကားစမြည် အဆုံးသတ်ရန်",
+  dialectHint: "ဒါက သင့်ဒေသက လူတွေ တကယ်ပြောနေတဲ့ပုံစံနဲ့ ဘာသာပြန်ကို ကိုက်ညီအောင် ကူညီပေးပါတယ်။ စံပြပုံစံအဖြစ် သတ်မှတ်ထားပြီးသားဖြစ်ပြီး၊ တခြားဒေသိယစကားက ပိုကိုက်ညီမယ်ဆိုရင်သာ ပြောင်းပါ။",
+  keyboardHint: "အကြံပြုချက်: ကီးဘုတ်ပေါ်က \ud83c\udf10 ကို နှိပ်ပြီး ပြောင်းပါ",
+  keyboardSetupHint: "ဒီစက်ရဲ့ ကီးဘုတ်က သင့်ဘာသာစကားကို မရိုက်နိုင်သေးဘူးဆိုရင်၊ စမပြောင်းခင် အိမ်ရှင်ကို ကူညီပေးဖို့ တောင်းဆိုထားတာ ကောင်းပါတယ်။",
+  devHint: "ဒီအက်ပ်က ဖွံ့ဖြိုးတိုးတက်နေဆဲဖြစ်လို့ တခါတလေ မှန်ကန်စွာ အလုပ်မလုပ်ချင်ပါဘူး။ တစ်ခုခု မှန်မှန်မကန်ဖြစ်နေတာ တွေ့ရင် စကားစမြည် ပြီးတဲ့နောက် အကြံပြုချက်မှာ ပြောပြနိုင်ပါတယ်။",
+  feedbackTitle: "ဘယ်လိုခံစားရလဲ?",
+  feedbackBody: "ဘာသာပြန်က သဘာဝကျလား? ဒီလိုအရာက တကယ်အသုံးဝင်နိုင်မယ်လို့ထင်လား? ကောင်းသည်ဖြစ်စေ၊ ညံ့သည်ဖြစ်စေ မည်သည့်အမြင်ကိုမဆို ကြိုဆိုပါတယ်။",
+  feedbackPlaceholder: "သင့်အမြင်ကို မျှဝေပါ...", feedbackSubmit: "အကြံပြုချက် ပို့ရန်",
+  translatingLabel: "ဘာသာပြန်နေသည်...", retryLabel: "ထပ်စမ်းရန် နှိပ်ပါ",
+  thanksTitle: "ကျေးဇူးတင်ပါတယ်!",
+  thanksIntro: "ဒါကို စမ်းသပ်ပြီး အမြင်ကို မျှဝေပေးလို့ တကယ်ကျေးဇူးတင်ပါတယ်။ အင်္ဂလိပ်စာက အတားအဆီးဖြစ်နေတဲ့အခါမျိုးမှာ ဒီလိုပွဲမျိုးတွေမှာ ချိတ်ဆက်ဖို့ ပိုလွယ်ကူစေမယ်လို့ မျှော်လင့်ပါတယ်။ ဒါက အစောပိုင်း စမ်းသပ်မှုပဲရှိသေးလို့၊ နောက်ထပ် ထည့်သွင်းချင်တဲ့အရာတွေကတော့-",
+  thanksFeatures: [
+    "စကားပြောခဲ့ဖူးတဲ့သူတွေကို မှတ်မိထားတာ၊ ဒီလိုပွဲမျိုးမှာ ထပ်တွေ့ရင် သူတို့ဘယ်သူလဲ၊ ဘာစကားပြောခဲ့လဲဆိုတာကို လျင်မြန်စွာ ပြန်သတိရနိုင်အောင်",
+    "အသံသံစဉ် ရွေးချယ်စရာအမျိုးမျိုး၊ သူငယ်ချင်းနဲ့ဆို ပေါ့ပေါ့ပါးပါး၊ လူသစ်နဲ့ဆို ပိုယဉ်ကျေးအောင်၊ စကားစမြည်တိုင်း အသံတူမနေအောင်",
+    "ဖုန်းကို လက်ဆင့်ကမ်းစရာမလိုဘဲ ကိုယ်ပိုင်ဖုန်းနဲ့ စကားပြောနိုင်တာ၊ စာရိုက်မယ့်အစား ပြောရုံနဲ့ရနိုင်တဲ့ ရွေးချယ်စရာပါ"
+  ],
+  thanksClosing: "ဒီအကြောင်း ဒါမှမဟုတ် တခြားအရာနဲ့ပတ်သက်ပြီး ဆက်သွယ်ချင်ရင် အမြဲကြိုဆိုပါတယ်။ နောက်ပိုင်း ထပ်တွေးမိတာရှိရင်လည်း အမြဲနားထောင်ဖို့ အသင့်ပါ။",
+  preparingNote: "သင့်အကြံပြုချက်ကို ပြင်ဆင်နေသည်...",
+  finishBtn: "ပြီးပါပြီ", sentLabel: "ကျေးဇူးတင်ပါတယ်!", sendingLabel: "ပို့နေသည်...", redirectingLabel: "{n} စက္ကန့်အတွင်း အစသို့ ပြန်သွားပါမည်..."
+}, dialects: {} },
+
+id: { base: {
+  consentTitle: "Hai!",
+  consentBody: "Saya sedang membuat sesuatu untuk membantu orang mengobrol secara alami meski beda bahasa. Mau bantu saya coba versi awalnya? Saya senang dengar pendapat kamu setelahnya.",
+  yesBtn: "Ya, ayo coba", noBtn: "Tidak, terima kasih",
+  declineBody: "Tidak masalah sama sekali, terima kasih sudah mempertimbangkannya! Semoga malammu menyenangkan.",
+  namePrompt: "Siapa namamu?", nameContinue: "Mulai percakapan",
+  inputPlaceholderGuest: "Ketik dalam bahasamu...", sendBtn: "Kirim", endBtn: "Akhiri percakapan",
+  dialectHint: "Ini membantu terjemahan sesuai dengan cara orang di daerahmu benar-benar bicara. Sudah diatur ke standar, ubah hanya jika ada gaya lain yang lebih cocok untukmu.",
+  keyboardHint: "Tip: ketuk \ud83c\udf10 di keyboard untuk berganti",
+  keyboardSetupHint: "Kalau keyboard perangkat ini belum bisa mengetik bahasamu, sebaiknya minta tuan rumah bantu mengaturnya dulu sebelum mulai.",
+  devHint: "Aplikasi ini masih dalam pengembangan dan mungkin kadang belum berjalan sempurna. Kalau ada yang terasa aneh, boleh disampaikan di kolom masukan setelah percakapan ini.",
+  feedbackTitle: "Bagaimana rasanya?",
+  feedbackBody: "Apakah terjemahannya terasa alami? Menurutmu hal seperti ini bisa benar-benar berguna? Pendapat apa pun boleh, baik atau kurang baik.",
+  feedbackPlaceholder: "Bagikan pendapatmu...", feedbackSubmit: "Kirim masukan",
+  translatingLabel: "Menerjemahkan...", retryLabel: "Ketuk untuk coba lagi",
+  thanksTitle: "Terima kasih!",
+  thanksIntro: "Benar-benar berterima kasih kamu mau mencoba dan berbagi pendapat. Semoga ini bisa membantu orang terhubung lebih mudah di acara seperti ini, terutama saat bahasa Inggris terasa jadi penghalang. Ini baru uji coba awal, berikut beberapa hal yang ingin saya tambahkan nanti:",
+  thanksFeatures: [
+    "Mengingat orang-orang yang pernah kamu ajak bicara, jadi kalau bertemu lagi di acara serupa, bisa dapat ringkasan singkat siapa mereka dan apa yang pernah dibahas",
+    "Pilihan nada bicara berbeda, seperti berganti antara santai dengan teman atau lebih formal saat baru kenal seseorang, supaya percakapan tidak terdengar sama semua",
+    "Bisa mengobrol lewat ponsel masing-masing tanpa harus bergantian memegang satu ponsel, termasuk pilihan untuk bicara saja alih-alih mengetik"
+  ],
+  thanksClosing: "Kalau suatu saat kamu ingin menghubungi saya soal ini, atau hal lain, saya benar-benar senang mendengarnya. Dan kalau ada pemikiran lain nanti, saya selalu senang mendengarnya.",
+  preparingNote: "Sedang menyiapkan masukanmu...",
+  finishBtn: "Selesai", sentLabel: "Terima kasih!", sendingLabel: "Mengirim...", redirectingLabel: "Kembali ke awal dalam {n} detik..."
+}, dialects: {} }
 };
 
 /* ============ STATE ============ */
 function freshState(){
   return {
     screen: 'language', history: [],
-    lang: null, dialect: null, customLang: '',
+    lang: {code:'other', label:'Other', dialects:[]}, dialect: '', customLang: '',
     ui: null, name: '', turn: 'guest', messages: [],
     feedbackText: '', feedbackTranslatedToEnglish: '', feedbackPending: false
   };
@@ -639,6 +882,36 @@ function showConfirmModal(message, onConfirm){
   document.getElementById('modalConfirm').addEventListener('click', () => { overlay.remove(); onConfirm(); });
 }
 
+function showMoreLanguagesModal(){
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay more-modal';
+  const items = MORE_LANGUAGES.map(l => `
+    <div class="lang-btn ${state.lang && state.lang.code===l.code ? 'selected':''}" data-code="${l.code}">
+      <span class="lang-native">${l.native}</span>
+      <span class="lang-eng">${l.label}</span>
+    </div>
+  `).join('');
+  overlay.innerHTML = `
+    <div class="modal-card">
+      <p class="more-modal-title">More languages</p>
+      <div class="lang-grid">${items}</div>
+      <div class="modal-row" style="margin-top:14px;">
+        <button class="modal-cancel" id="moreModalClose">Close</button>
+      </div>
+    </div>`;
+  document.body.appendChild(overlay);
+  overlay.querySelectorAll('.lang-btn').forEach(el => {
+    el.addEventListener('click', () => {
+      const code = el.dataset.code;
+      state.lang = findAnyLanguage(code);
+      state.dialect = state.lang.dialects.length ? state.lang.dialects[0].en : '';
+      overlay.remove();
+      render();
+    });
+  });
+  document.getElementById('moreModalClose').addEventListener('click', () => overlay.remove());
+}
+
 /* ============ SECRET DEVELOPER DRAWER (5 taps on header) ============ */
 let devTapCount = 0;
 let devTapTimer = null;
@@ -678,11 +951,15 @@ function showDevDrawer(){
 /* ============ SCREENS ============ */
 function renderLanguageScreen(){
   const items = LANGUAGES.map(l => `
-    <div class="lang-btn ${state.lang && state.lang.code===l.code ? 'selected':''}" data-code="${l.code}">
+    <div class="lang-btn" data-code="${l.code}">
       <span class="lang-native">${l.native}</span>
       <span class="lang-eng">${l.label}</span>
     </div>
   `).join('');
+
+  const moreSelected = state.lang && isMoreLanguage(state.lang.code);
+  const moreBtnNative = moreSelected ? state.lang.native : 'More languages';
+  const moreBtnEng = moreSelected ? state.lang.label : 'Tap to see more';
 
   const dialectOptions = state.lang && state.lang.code !== 'other'
     ? state.lang.dialects.map(d => `<option value="${d.en}" ${state.dialect===d.en?'selected':''}>${d.native} — ${d.en}</option>`).join('')
@@ -694,9 +971,14 @@ function renderLanguageScreen(){
     <p class="sub">This helps us get the tone and dialect right for you.</p>
     <div class="lang-grid">
       ${items}
-      <div class="lang-btn other ${state.lang && state.lang.code==='other' ? 'selected':''}" data-code="other">
+      <div class="lang-btn other" data-code="other">
         <span class="lang-native">Other</span>
         <span class="lang-eng">Type it in</span>
+      </div>
+      <div class="lang-btn more-btn" id="moreLangBtn">
+        <span class="lang-native">${moreBtnNative}</span>
+        <span class="lang-eng">${moreBtnEng}</span>
+        ${moreSelected ? `<span class="more-indicator">More</span>` : ''}
       </div>
     </div>
     ${state.lang && state.lang.code === 'other' ? `
@@ -714,7 +996,12 @@ function renderLanguageScreen(){
     <button class="btn btn-primary" id="continueBtn" ${!canContinueLang() ? 'disabled' : ''}>Continue</button>
   `;
 
-  document.querySelectorAll('.lang-btn').forEach(el => {
+  document.querySelectorAll('.lang-grid .lang-btn').forEach(el => {
+    el.classList.toggle('selected', state.lang && state.lang.code === el.dataset.code);
+  });
+  if(moreSelected){ document.getElementById('moreLangBtn').classList.add('selected'); }
+
+  document.querySelectorAll('.lang-grid .lang-btn:not(.more-btn)').forEach(el => {
     el.addEventListener('click', () => {
       const code = el.dataset.code;
       if(code === 'other'){ state.lang = {code:'other', label:'Other', dialects:[]}; state.dialect = ''; }
@@ -722,6 +1009,8 @@ function renderLanguageScreen(){
       render();
     });
   });
+  document.getElementById('moreLangBtn').addEventListener('click', showMoreLanguagesModal);
+
   const customInput = document.getElementById('customLangInput');
   if(customInput) customInput.addEventListener('input', e => { state.customLang = e.target.value; refreshContinueBtn(); });
   const dialectSelect = document.getElementById('dialectSelect');
@@ -750,11 +1039,13 @@ function renderLoading(msg){
 }
 
 function renderConsent(){
+  const showKeyboardSetupHint = state.lang && state.lang.nonLatin;
   app.innerHTML = `
     ${markHeader('talk — live translator')}
     <div class="screen">
       <h1>${state.ui.consentTitle}</h1>
       <p class="sub">${state.ui.consentBody}</p>
+      ${showKeyboardSetupHint ? `<div class="keyboard-setup-banner"><span>⌨️</span><span>${state.ui.keyboardSetupHint}</span></div>` : ''}
       <div class="grow"></div>
       <button class="btn btn-primary" id="yesBtn">${state.ui.yesBtn}</button>
       <button class="btn btn-ghost" id="noBtn">${state.ui.noBtn}</button>
@@ -834,10 +1125,15 @@ function renderChat(){
       <div class="turn-btn ${state.turn==='host'?'active':''}" data-turn="host">${HOST_NAME}</div>
     </div>
     <div class="messages" id="messages">${bubbles}</div>
-    <div class="chat-input-row">
+    <div class="chat-input-wrap">
       <textarea id="chatInput" ${kbTag ? `lang="${kbTag}"` : ''} placeholder="${state.turn==='guest' ? state.ui.inputPlaceholderGuest : 'Type in English...'}"></textarea>
-      <button class="send-btn" id="sendBtn">↑</button>
+      <button class="send-btn" id="sendBtn" aria-label="${state.ui.sendBtn}">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 19V5M12 5L5 12M12 5L19 12" stroke="white" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
     </div>
+    <p class="dev-hint">${state.ui.devHint}</p>
     ${showKbHint ? `<p class="hint" style="text-align:center;">${state.ui.keyboardHint}</p>` : ''}
     <div class="end-link" id="endLink">${state.ui.endBtn}</div>
   `;
