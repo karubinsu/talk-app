@@ -80,6 +80,7 @@
   .msg.host{align-self:flex-start;background:var(--card);border-bottom-left-radius:4px;}
   .msg .orig{font-size:12px;color:var(--text-muted);margin-top:5px;}
   .msg.has-tip{cursor:pointer;}
+  .msg.has-tip.tip-open .tip-marker{opacity:0;}
   .tip-marker{position:absolute;bottom:5px;font-size:10px;line-height:1;pointer-events:none;filter:drop-shadow(0 1px 1px rgba(0,0,0,0.35));}
   .msg.host .tip-marker{right:6px;}
   .msg.guest .tip-marker{left:6px;}
@@ -739,8 +740,15 @@ const openedTipIds = new Set();
 function closeActiveTip(){
   clearTimeout(tipTimeoutHandle);
   if(activeTipId){
-    const el = document.querySelector(`.msg[data-id="${activeTipId}"] .msg-tip`);
-    if(el) el.classList.remove('show');
+    const bubble = document.querySelector(`.msg[data-id="${activeTipId}"]`);
+    const el = bubble ? bubble.querySelector('.msg-tip') : null;
+    if(el){
+      el.style.transition = 'none';
+      el.classList.remove('show');
+      void el.offsetHeight; // force reflow so the transition:none actually applies
+      el.style.transition = '';
+    }
+    if(bubble) bubble.classList.remove('tip-open');
   }
   activeTipId = null;
 }
@@ -753,8 +761,10 @@ function closeActiveTip(){
 function openTip(id){
   clearTimeout(tipTimeoutHandle);
   activeTipId = id;
-  const el = document.querySelector(`.msg[data-id="${id}"] .msg-tip`);
+  const bubble = document.querySelector(`.msg[data-id="${id}"]`);
+  const el = bubble ? bubble.querySelector('.msg-tip') : null;
   if(el) el.classList.add('show');
+  if(bubble) bubble.classList.add('tip-open');
   const duration = openedTipIds.has(id) ? 10000 : 5000;
   openedTipIds.add(id);
   tipTimeoutHandle = setTimeout(closeActiveTip, duration);
@@ -763,8 +773,15 @@ function openTip(id){
 function toggleTip(id){
   if(activeTipId === id){ closeActiveTip(); return; }
   if(activeTipId){
-    const prevEl = document.querySelector(`.msg[data-id="${activeTipId}"] .msg-tip`);
-    if(prevEl) prevEl.classList.remove('show');
+    const prevBubble = document.querySelector(`.msg[data-id="${activeTipId}"]`);
+    const prevEl = prevBubble ? prevBubble.querySelector('.msg-tip') : null;
+    if(prevEl){
+      prevEl.style.transition = 'none';
+      prevEl.classList.remove('show');
+      void prevEl.offsetHeight;
+      prevEl.style.transition = '';
+    }
+    if(prevBubble) prevBubble.classList.remove('tip-open');
   }
   openTip(id);
 }
@@ -1189,7 +1206,7 @@ function bubbleHtml(m){
   // of which bubble the tip is attached to.
   const noteText = state.turn === 'guest' ? m.noteLocal : m.noteEn;
   const hasTip = !!noteText;
-  return `<div class="msg ${m.sender}${hasTip ? ' has-tip' : ''}" data-id="${m.id}">
+  return `<div class="msg ${m.sender}${hasTip ? ' has-tip' : ''}${activeTipId===m.id ? ' tip-open' : ''}" data-id="${m.id}">
     <div>${m.translated}</div>
     <div class="orig">${m.original}</div>
     ${hasTip ? `<span class="tip-marker">✨</span><div class="msg-tip${activeTipId===m.id ? ' show' : ''}">💬 ${noteText}</div>` : ''}
