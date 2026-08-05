@@ -10,7 +10,7 @@
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
 <link rel="manifest" href="site.webmanifest">
-<title>Common — Connect Beyond Language</title>
+<title>Tandem — Communicate in your language. Connect in theirs.</title>
 <style>
   :root{
     --bg:#14141f; --bg-soft:#1c1c2c; --card:#232338; --card-hi:#2b2b44;
@@ -123,6 +123,7 @@
   .dev-msg-info{display:flex;flex-direction:column;min-width:0;}
   .dev-msg-sender{font-size:11px;color:var(--accent);font-weight:600;}
   .dev-msg-text{font-size:12.5px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:180px;}
+  .dev-msg-model{font-size:10px;color:var(--text-muted);opacity:0.75;margin-top:1px;}
   .dev-msg-actions{display:flex;gap:6px;flex-shrink:0;}
   .dev-msg-actions button{background:transparent;border:1px solid var(--border);color:var(--text-muted);border-radius:8px;width:28px;height:28px;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;padding:0;}
   .dev-msg-actions button:hover{border-color:var(--accent);color:var(--text);}
@@ -251,6 +252,8 @@ const STATIC_UI = {
     feedbackBody: "Did the translation feel natural? Do you think something like this could actually be useful? Any thoughts are welcome, good or bad.",
     feedbackPlaceholder: "Share your thoughts...", feedbackSubmit: "Send feedback",
     translatingLabel: "Translating...", retryLabel: "Tap to retry",
+    backConfirmBody: "Start over? This will clear the current conversation.",
+    backConfirmBtn: "Start over", cancelBtn: "Cancel",
     thanksTitle: "Thank you!",
     thanksIntro: "Really appreciate you trying this and sharing your thoughts. Hoping this can make it easier to connect with people who speak different languages, especially when you don't share a language you can comfortably communicate in. This is just an early test. Here's some of what I'm hoping to add:",
     thanksFeatures: [
@@ -280,6 +283,9 @@ const STATIC_UI = {
     feedbackBody: "Natural ba ang translation? Sa tingin mo ba magiging useful talaga ito? Kahit anong feedback, mabuti man o masama, ay welcome.",
     feedbackPlaceholder: "I-share ang thoughts mo...", feedbackSubmit: "Ipadala ang feedback",
     translatingLabel: "Nagta-translate...", retryLabel: "Pindutin para subukan ulit",
+    backConfirmBody: "Magsisimula ulit? Buburahin nito ang kasalukuyang usapan.",
+    backConfirmBtn: "Magsimula ulit",
+    cancelBtn: "Kanselahin",
     thanksTitle: "Salamat!",
     thanksIntro: "Talagang naa-appreciate ko na sinubukan mo ito at ibinahagi ang thoughts mo. Sana makatulong ito para mas madali kang makakonekta sa mga taong ibang wika ang gamit, lalo na kapag wala kayong wikang pareho ninyong komportableng gamitin sa isa't isa. Unang test pa lang ito, at ito ang ilan sa mga plano kong idagdag:",
     thanksFeatures: [
@@ -334,6 +340,13 @@ const STATIC_UI = {
     feedbackBody: "翻訳は自然に感じましたか? こういうのって実際に役立つと思いますか? 良い意見も悪い意見も歓迎です。",
     feedbackPlaceholder: "感想をどうぞ...", feedbackSubmit: "フィードバックを送る",
     translatingLabel: "翻訳中...", retryLabel: "タップして再試行",
+    backConfirmBody: "最初からやり直しますか？現在の会話はすべて消去されます。",
+    backConfirmBtn: "最初からやり直す",
+    cancelBtn: "キャンセル",
+    backConfirmBody: "처음부터 다시 시작할까요? 지금 나눈 대화는 사라져요.",
+    backConfirmBtn: "처음부터 다시 시작", cancelBtn: "취소",
+    backConfirmBody: "最初からやり直しますか？今の会話は消えてしまいます。",
+    backConfirmBtn: "最初からやり直す", cancelBtn: "キャンセル",
     thanksTitle: "ありがとう!",
     thanksIntro: "試してくれて、感想も聞かせてくれて本当にありがとう。異なる言語を話す人同士でも、もっとつながりやすくなればと思っています。特に、お互いに無理なく使える共通の言語がないときに役立てば嬉しいです。これはまだ初期テストです。今後追加したいと思っているのは、こんな機能です。",
     thanksFeatures: [
@@ -371,6 +384,9 @@ const STATIC_UI = {
     feedbackBody: "번역이 자연스러웠나요? 이런 게 실제로 유용할 것 같아요? 좋은 의견이든 안 좋은 의견이든 다 환영이에요.",
     feedbackPlaceholder: "생각을 남겨주세요...", feedbackSubmit: "피드백 보내기",
     translatingLabel: "번역 중...", retryLabel: "탭해서 다시 시도",
+    backConfirmBody: "처음부터 다시 시작할까요? 현재 대화 내용이 모두 삭제돼요.",
+    backConfirmBtn: "처음부터 다시 시작",
+    cancelBtn: "취소",
     thanksTitle: "고마워요!",
     thanksIntro: "직접 써보고 생각도 나눠줘서 정말 고마워요. 서로 다른 언어를 쓰는 사람들도 더 쉽게 연결될 수 있으면 좋겠어요. 특히 두 사람이 편하게 사용할 수 있는 공통 언어가 없을 때 도움이 되었으면 해요. 이건 아직 초기 테스트예요. 앞으로 추가하고 싶은 기능은 이런 것들이에요.",
     thanksFeatures: [
@@ -407,6 +423,9 @@ const STATIC_UI = {
     feedbackBody: "Bản dịch có tự nhiên không? Bạn nghĩ thứ này có thực sự hữu ích không? Ý kiến gì cũng được, khen hay chê đều hoan nghênh.",
     feedbackPlaceholder: "Chia sẻ suy nghĩ của bạn...", feedbackSubmit: "Gửi phản hồi",
     translatingLabel: "Đang dịch...", retryLabel: "Chạm để thử lại",
+    backConfirmBody: "Bắt đầu lại từ đầu nhé? Cuộc trò chuyện hiện tại sẽ bị xóa.",
+    backConfirmBtn: "Bắt đầu lại",
+    cancelBtn: "Hủy",
     thanksTitle: "Cảm ơn bạn!",
     thanksIntro: "Thật sự cảm ơn bạn đã thử và chia sẻ suy nghĩ. Mong là ứng dụng này sẽ giúp mọi người dễ kết nối hơn khi nói các ngôn ngữ khác nhau, đặc biệt là khi hai người không có một ngôn ngữ chung mà cả hai đều cảm thấy thoải mái khi sử dụng. Đây mới chỉ là bản thử nghiệm đầu tiên. Đây là một số tính năng mình muốn thêm vào sau này.",
     thanksFeatures: [
@@ -447,6 +466,9 @@ const STATIC_UI = {
     feedbackBody: "翻译听起来自然吗? 你觉得这种东西真的有用吗? 什么想法都欢迎,好的坏的都可以。",
     feedbackPlaceholder: "分享你的想法...", feedbackSubmit: "发送反馈",
     translatingLabel: "翻译中...", retryLabel: "点击重试",
+    backConfirmBody: "要重新开始吗？当前的对话会被清除。",
+    backConfirmBtn: "重新开始",
+    cancelBtn: "取消",
     thanksTitle: "谢谢你!",
     thanksIntro: "真的很感谢你愿意尝试并分享想法。希望这个应用能让说不同语言的人更容易建立联系，尤其是在两个人没有一种都能舒服使用的共同语言时。这还只是早期测试，以下是我之后想加上的一些功能。",
     thanksFeatures: [
@@ -499,6 +521,9 @@ const STATIC_UI = {
     feedbackBody: "คำแปลฟังดูเป็นธรรมชาติไหม คิดว่าแอปแบบนี้มีประโยชน์จริงไหม ความเห็นแบบไหนก็ยินดีรับฟังหมด",
     feedbackPlaceholder: "แชร์ความคิดเห็น...", feedbackSubmit: "ส่งความคิดเห็น",
     translatingLabel: "กำลังแปล...", retryLabel: "แตะเพื่อลองใหม่",
+    backConfirmBody: "เริ่มใหม่ไหม? บทสนทนาปัจจุบันจะถูกลบ",
+    backConfirmBtn: "เริ่มใหม่",
+    cancelBtn: "ยกเลิก",
     thanksTitle: "ขอบคุณมาก!",
     thanksIntro: "ขอบคุณจริงๆ ที่ลองใช้และแชร์ความคิดเห็น หวังว่าแอปนี้จะช่วยให้คนที่พูดคนละภาษาสามารถเชื่อมต่อกันได้ง่ายขึ้น โดยเฉพาะเวลาที่ทั้งสองคนไม่มีภาษากลางที่ใช้สื่อสารกันได้อย่างสบายใจ นี่ยังเป็นแค่การทดสอบช่วงแรก นี่คือบางฟีเจอร์ที่อยากเพิ่มในอนาคต",
     thanksFeatures: [
@@ -536,6 +561,9 @@ const STATIC_UI = {
     feedbackBody: "¿La traducción se sintió natural? ¿Crees que esto realmente podría ser útil? Cualquier opinión es bienvenida, buena o mala.",
     feedbackPlaceholder: "Comparte lo que piensas...", feedbackSubmit: "Enviar comentarios",
     translatingLabel: "Traduciendo...", retryLabel: "Toca para reintentar",
+    backConfirmBody: "¿Empezar de nuevo? Se borrará la conversación actual.",
+    backConfirmBtn: "Empezar de nuevo",
+    cancelBtn: "Cancelar",
     thanksTitle: "¡Gracias!",
     thanksIntro: "De verdad agradezco que la hayas probado y compartido tus opiniones. Espero que ayude a que sea más fácil conectar con personas que hablan otros idiomas, sobre todo cuando no tienen un idioma en común que ambos puedan usar con comodidad. Esto es solo una prueba inicial. Estas son algunas de las funciones que espero añadir:",
     thanksFeatures: [
@@ -572,6 +600,9 @@ const STATIC_UI = {
     feedbackBody: "क्या अनुवाद स्वाभाविक लगा? क्या लगता है ऐसी चीज़ सच में काम की हो सकती है? अच्छी या बुरी, कोई भी राय बताएं।",
     feedbackPlaceholder: "अपनी राय लिखें...", feedbackSubmit: "फीडबैक भेजें",
     translatingLabel: "अनुवाद हो रहा है...", retryLabel: "फिर से कोशिश करने के लिए दबाएं",
+    backConfirmBody: "फिर से शुरू करें? इससे मौजूदा बातचीत मिट जाएगी।",
+    backConfirmBtn: "फिर से शुरू करें",
+    cancelBtn: "रद्द करें",
     thanksTitle: "धन्यवाद!",
     thanksIntro: "इसे आज़माने और अपनी राय साझा करने के लिए सच में धन्यवाद। उम्मीद है इससे अलग-अलग भाषाएं बोलने वाले लोगों के लिए एक-दूसरे से जुड़ना आसान होगा, खासकर तब जब दोनों के पास कोई ऐसी साझा भाषा न हो जिसमें वे आराम से बात कर सकें। यह अभी सिर्फ शुरुआती टेस्ट है। आगे मैं इसमें ये चीज़ें जोड़ना चाहता हूँ:",
     thanksFeatures: [
@@ -674,6 +705,9 @@ const STATIC_UI = {
     feedbackBody: "Terjemahan tu rasa semula jadi tak? Rasa benda macam ni betul-betul berguna tak? Apa-apa pendapat pun dialu-alukan, baik atau buruk.",
     feedbackPlaceholder: "Kongsi pendapat awak...", feedbackSubmit: "Hantar maklum balas",
     translatingLabel: "Sedang terjemah...", retryLabel: "Ketik untuk cuba lagi",
+    backConfirmBody: "Nak mula semula? Perbualan semasa akan dipadam.",
+    backConfirmBtn: "Mula semula",
+    cancelBtn: "Batal",
     thanksTitle: "Terima kasih!",
     thanksIntro: "Saya betul-betul hargai kesudian awak mencuba dan berkongsi pendapat. Harapnya aplikasi ini boleh memudahkan orang yang menggunakan bahasa berbeza untuk berhubung, terutamanya apabila mereka tidak mempunyai bahasa yang sama yang kedua-duanya selesa gunakan. Ini baru ujian awal, dan ini antara ciri yang saya harap dapat ditambah nanti:",
     thanksFeatures: [
@@ -703,6 +737,9 @@ const STATIC_UI = {
     feedbackBody: "ဘာသာပြန်တာ သဘာဝကျလား။ ဒီလိုအရာမျိုးက တကယ်အသုံးဝင်မယ်လို့ ထင်လား။ ကောင်းတာဖြစ်ဖြစ်၊ မကောင်းတာဖြစ်ဖြစ် ဘယ်လိုအမြင်မဆို ကြိုဆိုပါတယ်။",
     feedbackPlaceholder: "သင့်အမြင်ကို မျှဝေပါ...", feedbackSubmit: "အကြံပြုချက် ပို့ရန်",
     translatingLabel: "ဘာသာပြန်နေသည်...", retryLabel: "ထပ်စမ်းရန် နှိပ်ပါ",
+    backConfirmBody: "အစကနေ ပြန်စမလား။ လက်ရှိစကားပြောထားတာတွေ ပျက်သွားပါမယ်။",
+    backConfirmBtn: "အစကနေ ပြန်စမယ်",
+    cancelBtn: "မလုပ်တော့ပါ",
     thanksTitle: "ကျေးဇူးတင်ပါတယ်!",
     thanksIntro: "ဒါကို စမ်းသုံးပြီး အမြင်ကို မျှဝေပေးလို့ တကယ်ကျေးဇူးတင်ပါတယ်။ မတူညီတဲ့ ဘာသာစကားတွေကို ပြောတဲ့သူတွေအတွက် အချင်းချင်း ပိုလွယ်လွယ်ကူကူ ချိတ်ဆက်နိုင်အောင် ကူညီပေးနိုင်မယ်လို့ မျှော်လင့်ပါတယ်။ အထူးသဖြင့် နှစ်ယောက်လုံး အဆင်ပြေပြေ အသုံးပြုနိုင်တဲ့ ဘာသာစကားတစ်ခု မရှိတဲ့အခါမှာ ပိုအသုံးဝင်မယ်လို့ မျှော်လင့်ပါတယ်။ ဒါက အစောပိုင်း စမ်းသပ်မှုတစ်ခုပဲ ရှိသေးပြီး နောက်ပိုင်းမှာ ထည့်ချင်တဲ့ လုပ်ဆောင်ချက်တွေကတော့-",
     thanksFeatures: [
@@ -732,6 +769,9 @@ const STATIC_UI = {
     feedbackBody: "Apakah terjemahannya terasa alami? Menurutmu, hal seperti ini benar-benar bisa berguna? Pendapat apa pun boleh, baik atau buruk.",
     feedbackPlaceholder: "Bagikan pendapatmu...", feedbackSubmit: "Kirim masukan",
     translatingLabel: "Menerjemahkan...", retryLabel: "Ketuk untuk coba lagi",
+    backConfirmBody: "Mulai dari awal? Percakapan saat ini akan dihapus.",
+    backConfirmBtn: "Mulai lagi",
+    cancelBtn: "Batal",
     thanksTitle: "Terima kasih!",
     thanksIntro: "Terima kasih banyak sudah mau mencoba dan berbagi pendapat. Semoga aplikasi ini membantu orang yang menggunakan bahasa berbeda untuk lebih mudah terhubung, terutama saat mereka tidak punya bahasa yang sama-sama nyaman digunakan untuk berkomunikasi. Ini baru uji coba awal, dan berikut beberapa fitur yang ingin saya tambahkan nanti:",
     thanksFeatures: [
@@ -891,8 +931,7 @@ async function callAI(system, userText) {
 
   const data = await res.json();
   if (!data.text) throw new Error("Empty response");
-  // data.usedModel tells us which model actually answered (useful for debugging/dev drawer)
-  return data.text;
+  return { text: data.text, usedModel: data.usedModel };
 }
 
 function langName(){
@@ -903,7 +942,7 @@ async function translateUIStrings(){
   const system = `You translate short UI strings for a casual, friendly conversation-translator app into ${langName()}. Write the way real bilingual native speakers actually talk day-to-day, natural code-switching with English is fine if that is genuinely how people commonly speak this language, but lean more on ${langName()} than English overall. Avoid stiff, textbook, or overly formal phrasing, it should read like a text from a friend. Never use em dashes, use commas, periods, or parentheses instead. Do not reference "tonight" or any single specific event, keep the wording generally applicable over time. Some values are arrays of short bullet phrases, translate every element and keep the same array structure. Return ONLY a valid JSON object with exactly the same keys as given. No markdown fences, no commentary, nothing else.`;
   const userText = JSON.stringify(STATIC_UI.en.base);
  // Replace: const raw = await callClaude(system, userText);
-const raw = await callAI(system, userText);
+const { text: raw } = await callAI(system, userText);
   const cleaned = raw.replace(/^```json\s*/,'').replace(/```$/,'').trim();
   try{ return JSON.parse(cleaned); }
   catch(e){ console.error("UI translation parse failed, falling back to English", e, raw); return STATIC_UI.en.base; }
@@ -918,7 +957,7 @@ async function getUIStrings(){
   if(state.lang.code !== 'other' && STATIC_UI[state.lang.code]){
     const entry = STATIC_UI[state.lang.code];
     const overrides = (entry.dialects && entry.dialects[state.dialect]) || {};
-    return Object.assign({}, entry.base, overrides); // zero LLM calls
+    return Object.assign({}, STATIC_UI.en.base, entry.base, overrides); // zero LLM calls; English fills in any keys not yet translated for this language
   }
   const key = UI_CACHE_PREFIX + (state.customLang||'');
   try{ const cached = localStorage.getItem(key); if(cached) return JSON.parse(cached); }catch(e){}
@@ -960,17 +999,16 @@ Leave "note_en" and "note_local" as null together only when the translation is a
     : `Full conversation so far:\n${historyLines || '(this is the first message)'}\n\nNow translate this new message from natural, casual English into natural, casual ${langName()}${dialectPart}:\n\n"${text}"`;
 
   // Replace: const raw = await callClaude(system, instruction);
-  const raw = await callAI(system, instruction);
+  const { text: raw, usedModel } = await callAI(system, instruction);
   const cleaned = raw.replace(/^```json\s*/,'').replace(/```$/,'').trim();
   try{
     const parsed = JSON.parse(cleaned);
     if(parsed && typeof parsed.translated === 'string'){
-      return { translated: parsed.translated, noteEn: parsed.note_en || null, noteLocal: parsed.note_local || null };
+      return { translated: parsed.translated, noteEn: parsed.note_en || null, noteLocal: parsed.note_local || null, usedModel };
     }
     throw new Error('unexpected shape');
   }catch(e){
-    // Fallback for a non-JSON reply: use it as the translation with no notes.
-    return { translated: raw.trim(), noteEn: null, noteLocal: null };
+    return { translated: raw.trim(), noteEn: null, noteLocal: null, usedModel };
   }
 }
 
@@ -988,26 +1026,35 @@ function markSVG(){
 function markHeader(){
   const showBack = state.history.length > 0 && state.screen !== 'thanks';
   const backHtml = showBack ? `<span class="back-btn" id="backBtn">←</span>` : '';
-  const tagline = (state.ui && state.ui.appTagline) || 'Connect Beyond Language';
+  const tagline = (state.ui && state.ui.appTagline) || 'Communicate in your language. Connect in theirs.';
   return `<div class="mark">
-    <div class="mark-left">${backHtml}${markSVG()}<span class="label">Common — ${tagline}</span></div>
-    <span class="start-over" id="startOverLink">Start over</span>
+    <div class="mark-left">${backHtml}${markSVG()}<span class="label">Tandem — ${tagline}</span></div>
   </div>`;
 }
 function goBack(){
+  if(state.screen === 'chat'){
+    const ui = state.ui || STATIC_UI.en.base;
+    showConfirmModal(
+      ui.backConfirmBody,
+      resetApp,
+      ui.backConfirmBtn,
+      ui.cancelBtn
+    );
+    return;
+  }
   if(state.history.length === 0) return;
   state.screen = state.history.pop();
   render();
 }
-function showConfirmModal(message, onConfirm){
+function showConfirmModal(message, onConfirm, confirmLabel, cancelLabel){
   const overlay = document.createElement('div');
   overlay.className = 'modal-overlay';
   overlay.innerHTML = `
     <div class="modal-card">
       <p>${message}</p>
       <div class="modal-row">
-        <button class="modal-cancel" id="modalCancel">Cancel</button>
-        <button class="modal-confirm" id="modalConfirm">Start over</button>
+        <button class="modal-cancel" id="modalCancel">${cancelLabel || 'Cancel'}</button>
+        <button class="modal-confirm" id="modalConfirm">${confirmLabel || 'Start over'}</button>
       </div>
     </div>`;
   document.body.appendChild(overlay);
@@ -1068,13 +1115,15 @@ function showDevDrawer(){
 
   const guestLabel = state.name || 'Guest';
   const msgListHtml = state.messages.slice().reverse().map(m => {
-    const preview = (m.original||'').slice(0,40) + ((m.original||'').length>40 ? '…' : '');
-    return `
-    <div class="dev-msg-row" data-id="${m.id}">
-      <div class="dev-msg-info">
-        <span class="dev-msg-sender">${m.sender === 'host' ? HOST_NAME : guestLabel}</span>
-        <span class="dev-msg-text">${preview}</span>
-      </div>
+  const preview = (m.original||'').slice(0,40) + ((m.original||'').length>40 ? '…' : '');
+  const modelInfo = m.usedModel ? `<span class="dev-msg-model">${m.usedModel}</span>` : '';
+  return `
+  <div class="dev-msg-row" data-id="${m.id}">
+    <div class="dev-msg-info">
+      <span class="dev-msg-sender">${m.sender === 'host' ? HOST_NAME : guestLabel}</span>
+      <span class="dev-msg-text">${preview}</span>
+      ${modelInfo}
+    </div>
       <div class="dev-msg-actions">
         <button class="dev-msg-switch" data-id="${m.id}" title="Switch to the other person">⇄</button>
         <button class="dev-msg-delete" data-id="${m.id}" title="Delete message">🗑</button>
@@ -1103,6 +1152,9 @@ function showDevDrawer(){
 
       <div class="modal-row" style="margin-top:16px;">
         <button class="modal-cancel" id="devClose">Close</button>
+        <div class="dev-section">
+          <button class="btn btn-ghost" id="devStartOver" style="margin-top:0;">Start over</button>
+        </div>
       </div>
     </div>`;
   document.body.appendChild(overlay);
@@ -1114,6 +1166,11 @@ function showDevDrawer(){
   document.getElementById('devHostNameInput').addEventListener('change', (e) => {
     setHostName(e.target.value);
     render(); // updates turn-toggle label, header, etc. behind the drawer
+  });
+
+  document.getElementById('devStartOver').addEventListener('click', () => {
+  overlay.remove();
+  showConfirmModal('Start over? This will clear the current conversation.', resetApp);
   });
 
   overlay.querySelectorAll('.dev-msg-delete').forEach(btn => {
@@ -1302,7 +1359,7 @@ function bubbleHtml(m){
   return `<div class="msg ${m.sender}${hasTip ? ' has-tip' : ''}${activeTipId===m.id ? ' tip-open' : ''}" data-id="${m.id}">
     <div>${m.translated}</div>
     <div class="orig">${m.original}</div>
-    ${hasTip ? `<span class="tip-marker">✨</span><div class="msg-tip${activeTipId===m.id ? ' show' : ''}">💬 ${noteText}</div>` : ''}
+    ${hasTip ? `<span class="tip-marker">💬</span><div class="msg-tip${activeTipId===m.id ? ' show' : ''}">💬 ${noteText}</div>` : ''}
   </div>`;
 }
 
@@ -1311,7 +1368,7 @@ async function doTranslate(msgId, text, direction){
   try{
     const result = await translateMessage(text, direction);
     const m = state.messages.find(x=>x.id===msgId);
-    if(m){ m.translated = result.translated; m.noteEn = result.noteEn; m.noteLocal = result.noteLocal; m.status = 'done'; }
+    if(m){ m.translated = result.translated; m.noteEn = result.noteEn; m.noteLocal = result.noteLocal; m.status = 'done'; m.usedModel = result.usedModel; }
     if(m && (m.noteEn || m.noteLocal)) shouldOpenTip = true;
   }catch(e){
     const m = state.messages.find(x=>x.id===msgId);
@@ -1431,7 +1488,7 @@ function renderFeedback(){
 function buildEmailContent(){
   const line = '-'.repeat(30);
   const guestLabel = state.name || 'Guest';
-  const header = `Common conversation summary\n${line}\nTester: ${guestLabel}\nLanguage: ${langName()}${state.dialect ? ' (' + state.dialect + ')' : ''}\n${line}\n`;
+  const header = `Tandem conversation summary\n${line}\nTester: ${guestLabel}\nLanguage: ${langName()}${state.dialect ? ' (' + state.dialect + ')' : ''}\n${line}\n`;
   const convo = state.messages
     .filter(m => m.status === 'done')
     .map(m => {
@@ -1439,7 +1496,7 @@ function buildEmailContent(){
       return `\n${who}\n  ${m.translated}\n  (original: ${m.original})`;
     }).join('\n');
   const feedback = `\n\n${line}\nFeedback from ${guestLabel}\n  ${state.feedbackTranslatedToEnglish || '(pending)'}\n  (original: ${state.feedbackText || '(none)'})\n${line}`;
-  return { subject: `Common feedback - ${guestLabel} (${langName()})`, body: header + convo + feedback };
+  return { subject: `Tandem feedback - ${guestLabel} (${langName()})`, body: header + convo + feedback };
 }
 
 async function sendFeedbackEmail(){
@@ -1511,7 +1568,7 @@ function saveState(){
 }
 function render(){
   saveState();
-  document.title = 'Common — ' + ((state.ui && state.ui.appTagline) || 'Connect Beyond Language');
+  document.title = 'Tandem — ' + ((state.ui && state.ui.appTagline) || 'Communicate in your language. Connect in theirs.');
   switch(state.screen){
     case 'language': renderLanguageScreen(); break;
     case 'loadingConsent': renderLoading('Getting things ready...'); break;
@@ -1523,10 +1580,7 @@ function render(){
     case 'thanks': renderThanks(); break;
     default: renderLanguageScreen();
   }
-  const soEl = document.getElementById('startOverLink');
-  if(soEl) soEl.addEventListener('click', () => {
-    showConfirmModal('Start over? This will clear the current conversation.', resetApp);
-  });
+  
   const backEl = document.getElementById('backBtn');
   if(backEl) backEl.addEventListener('click', goBack);
   const headerEl = document.querySelector('.mark-left');
