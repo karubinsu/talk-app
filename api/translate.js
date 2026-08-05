@@ -13,7 +13,7 @@ module.exports = async (req, res) => {
 
   const GROQ_API_KEY = process.env.GROQ_API_KEY;
 
-  const { system, userText, provider } = req.body || {};
+  const { system, userText, provider, geminiKey } = req.body || {};
 
   if (!userText) {
     return res.status(400).json({ error: 'Missing userText parameter.' });
@@ -100,13 +100,18 @@ module.exports = async (req, res) => {
   // Build a labeled "attempt" for every key we have on a given Gemini model,
   // so the dev drawer can show exactly which model+key answered.
   function geminiAttempts(modelName) {
-    return GEMINI_KEYS.map((key, i) => ({
-      type: 'gemini',
-      model: modelName,
-      apiKey: key,
-      label: `${modelName} (key ${i + 1})`
-    }));
+    if (geminiKey && geminiKey !== 'auto') {
+    const idx = parseInt(geminiKey, 10) - 1;
+    const key = GEMINI_KEYS[idx];
+    return key ? [{ type: 'gemini', model: modelName, apiKey: key, label: `${modelName} (key ${idx + 1}, forced)` }] : [];
   }
+  return GEMINI_KEYS.map((key, i) => ({
+    type: 'gemini',
+    model: modelName,
+    apiKey: key,
+    label: `${modelName} (key ${i + 1})`
+  }));
+}
 
   const KNOWN_MODELS = [
     'gemini-3.6-flash',
