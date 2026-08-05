@@ -4,7 +4,13 @@ module.exports = async (req, res) => {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+  const GEMINI_KEYS = [
+    process.env.GEMINI_API_KEY,
+    process.env.GEMINI_API_KEY_2,
+    process.env.GEMINI_API_KEY_3,
+    process.env.GEMINI_API_KEY_4,
+  ].filter(Boolean);
+
   const GROQ_API_KEY = process.env.GROQ_API_KEY;
 
   const { system, userText, provider } = req.body || {};
@@ -13,33 +19,15 @@ module.exports = async (req, res) => {
     return res.status(400).json({ error: 'Missing userText parameter.' });
   }
 
-  // ---- Model registry ----
-  const MODELS = {
-    'gemini-3.6-flash':        { type: 'gemini', model: 'gemini-3.6-flash' },
-    'gemini-3.5-flash-lite':   { type: 'gemini', model: 'gemini-3.5-flash-lite' },
-    'gemini-3.5-flash':        { type: 'gemini', model: 'gemini-3.5-flash' },
-    'llama-3.3-70b-versatile': { type: 'groq',   model: 'llama-3.3-70b-versatile' },
-    'llama-3.1-8b-instant':    { type: 'groq',   model: 'llama-3.1-8b-instant' },
-  };
-
-  // Order used when provider === 'auto'
-  const FALLBACK_CHAIN = [
-    'gemini-3.6-flash',
-    'gemini-3.5-flash-lite',
-    'gemini-3.5-flash',
-    'llama-3.3-70b-versatile',
-    'llama-3.1-8b-instant',
-  ];
-
-  async function callGemini(modelName, system, userText) {
-    if (!GEMINI_API_KEY) {
-      const err = new Error('GEMINI_API_KEY is missing on server.');
+  async function callGemini(modelName, system, userText, apiKey) {
+    if (!apiKey) {
+      const err = new Error('No Gemini API key available.');
       err.status = 500;
       throw err;
     }
 
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${GEMINI_API_KEY}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -109,37 +97,65 @@ module.exports = async (req, res) => {
     return text;
   }
 
-  async function callModel(key, system, userText) {
-    const cfg = MODELS[key];
-    if (!cfg) {
-      const err = new Error(`Unknown provider: ${key}`);
-      err.status = 400;
-      throw err;
-    }
-    return cfg.type === 'gemini'
-      ? await callGemini(cfg.model, system, userText)
-      : await callGroq(cfg.model, system, userText);
+  // Build a labeled "attempt" for every key we have on a given Gemini model,
+  // so the dev drawer can show exactly which model+key answered.
+  function geminiAttempts(modelName) {
+    return GEMINI_KEYS.map((key, i) => ({
+      type: 'gemini',
+      model: modelName,
+      apiKey: key,
+      label: `${modelName} (key ${i + 1})`
+    }));
+  }
+
+  const KNOWN_MODELS = [
+    'gemini-3.6-flash',
+    'gemini-3.5-flash-lite',
+    'gemini-3.5-flash',
+    'llama-3.3-70b-versatile',
+    'llama-3.1-8b-instant',
+  ];
+
+  // Auto chain: exhaust every Gemini key on 3.5-flash-lite first (it's the
+  // cheapest/fastest), then fall through to the other models, one key each.
+  const AUTO_CHAIN = [
+    ...geminiAttempts('gemini-3.5-flash-lite'),
+    ...geminiAttempts('gemini-3.6-flash').slice(0, 1),
+    ...geminiAttempts('gemini-3.5-flash').slice(0, 1),
+    { type: 'groq', model: 'llama-3.3-70b-versatile', label: 'llama-3.3-70b-versatile' },
+    { type: 'groq', model: 'llama-3.1-8b-instant', label: 'llama-3.1-8b-instant' },
+  ];
+
+  async function runAttempt(attempt, system, userText) {
+    return attempt.type === 'gemini'
+      ? await callGemini(attempt.model, system, userText, attempt.apiKey)
+      : await callGroq(attempt.model, system, userText);
   }
 
   try {
-    // ---- Explicit provider: force that model, no fallback ----
+    let chain;
+
     if (provider && provider !== 'auto') {
-      if (!MODELS[provider]) {
+      if (!KNOWN_MODELS.includes(provider)) {
         return res.status(400).json({ error: `Unknown provider: ${provider}` });
       }
-      const text = await callModel(provider, system, userText);
-      return res.status(200).json({ text, usedModel: provider });
+      // Explicit model choice: no falling through to other models, but still
+      // rotate across all available keys for that one model (Gemini only —
+      // Groq has a single key).
+      chain = provider.startsWith('gemini')
+        ? geminiAttempts(provider)
+        : [{ type: 'groq', model: provider, label: provider }];
+    } else {
+      chain = AUTO_CHAIN;
     }
 
-    // ---- Auto mode: sequential fallback chain ----
     let lastError = null;
-    for (const key of FALLBACK_CHAIN) {
+    for (const attempt of chain) {
       try {
-        const text = await callModel(key, system, userText);
-        return res.status(200).json({ text, usedModel: key });
+        const text = await runAttempt(attempt, system, userText);
+        return res.status(200).json({ text, usedModel: attempt.label });
       } catch (err) {
         lastError = err;
-        // try next model in the chain on any error (429, 4xx, 5xx, empty response, etc.)
         continue;
       }
     }
