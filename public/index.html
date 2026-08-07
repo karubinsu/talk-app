@@ -1221,6 +1221,7 @@ function showDevDrawer(){
       <span class="dev-msg-text">${preview}</span>
       ${modelInfo}
     </div>
+    <button class="dev-msg-refresh" data-id="${m.id}" title="Regenerate translation">↻</button>
       <div class="dev-msg-actions">
         <button class="dev-msg-switch" data-id="${m.id}" title="Switch to the other person">⇄</button>
         <button class="dev-msg-delete" data-id="${m.id}" title="Delete message">🗑</button>
@@ -1304,6 +1305,22 @@ function showDevDrawer(){
       doTranslate(id, m.original, direction); // regenerates translation + tip for the new sender
     });
   });
+
+  overlay.querySelectorAll('.dev-msg-refresh').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const id = btn.dataset.id;
+    const m = state.messages.find(x => x.id === id);
+    if(!m) return;
+    m.translated = null;
+    m.noteEn = null;
+    m.noteLocal = null;
+    m.status = 'pending';
+    overlay.remove();
+    render();
+    const direction = m.sender === 'guest' ? 'toEnglish' : 'fromEnglish';
+    doTranslate(id, m.original, direction);
+  });
+});
 
   document.getElementById('devClose').addEventListener('click', () => overlay.remove());
 }
