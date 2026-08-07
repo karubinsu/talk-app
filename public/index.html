@@ -103,6 +103,11 @@
   .send-btn:disabled{opacity:0.5;cursor:not-allowed;}
   .dev-hint{font-size:11px;color:var(--text-muted);margin:4px 2px 0;line-height:1.3;text-align:center;}
   .keyboard-setup-banner{display:flex;align-items:flex-start;gap:7px;font-size:12.5px;color:var(--text-muted);background:var(--card);border:1px solid var(--border);border-radius:12px;padding:10px 12px;margin:12px 0 0;line-height:1.4;}
+  .chip-row{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 14px;}
+  .chip{background:rgba(255,139,94,0.12);color:var(--accent);font-size:12px;padding:5px 10px;border-radius:999px;}
+  .starter-box{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:12px 14px;margin-bottom:4px;}
+  .starter-label{font-size:11px;color:var(--text-muted);margin-bottom:6px;}
+  .starter-text{font-size:13px;color:var(--text);line-height:1.5;opacity:0.85;}
   .end-link{text-align:center;font-size:13px;color:var(--text-muted);margin-top:10px;cursor:pointer;text-decoration:underline;}
   .thanks-icon{font-size:38px;margin-bottom:6px;}
   .feature-list{margin:4px 0 14px;padding-left:20px;}
@@ -240,6 +245,9 @@ const STATIC_UI = {
     appTagline: "Communicate in your language. Connect in theirs.",
     consentTitle: "Hi!",
     consentBody: "I'm building an app to help people connect and have natural conversations when they speak different languages. Want to help me test an early version? I'd love to hear what you think afterward.",
+    usefulForItems: ["International meetups", "Travel", "Restaurants", "Meeting someone new"],
+    startersLabel: "Not sure what to say?",
+    startersText: "Try asking where they're from, what they'd recommend nearby, or what brought them here.",
     yesBtn: "Yes, let's try it", noBtn: "No thanks",
     declineBody: "No worries at all, thanks for considering it! Have a great night.",
     namePrompt: "What's your name?", nameContinue: "Start the conversation",
@@ -1362,11 +1370,17 @@ function renderLoading(msg){
 
 function renderConsent(){
   const showKeyboardSetupHint = state.lang && state.lang.nonLatin;
+  const chips = (state.ui.usefulForItems || []).map(item => `<span class="chip">${item}</span>`).join('');
   app.innerHTML = `
     ${markHeader()}
     <div class="screen">
       <h1>${state.ui.consentTitle}</h1>
       <p class="sub">${state.ui.consentBody}</p>
+      <div class="chip-row">${chips}</div>
+      <div class="starter-box">
+        <div class="starter-label">${state.ui.startersLabel}</div>
+        <div class="starter-text">${state.ui.startersText}</div>
+      </div>
       ${showKeyboardSetupHint ? `<div class="keyboard-setup-banner"><span>⌨️</span><span>${state.ui.keyboardSetupHint}</span></div>` : ''}
       <div class="grow"></div>
       <button class="btn btn-primary" id="yesBtn">${state.ui.yesBtn}</button>
